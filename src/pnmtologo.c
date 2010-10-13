@@ -37,7 +37,7 @@ static unsigned int get_number(FILE *fp)
     /* Parse decimal number */
     val = 0;
     while (isdigit(c)) {
-	val = 10*val+c-'0';
+	val = 10 * val + c - '0';
 	c = fgetc(fp);
 	if (c == EOF)
 	    die("end of file\n");
@@ -48,7 +48,7 @@ static unsigned int get_number(FILE *fp)
 static unsigned int get_number255(FILE *fp, unsigned int maxval)
 {
     unsigned int val = get_number(fp);
-    return (255*val+maxval/2)/maxval;
+    return (255 * val + (maxval/2)) / maxval;
 }
 
 struct image *read_image(const char *filename)
@@ -109,7 +109,7 @@ struct image *read_image(const char *filename)
 	    /* Plain PBM */
             for (i = 0; i < logo->height * logo->width; i++)
                 logo->pixels[i].red = logo->pixels[i].green =
-			logo->pixels[i].blue = 255*(1-get_number(fp));
+			logo->pixels[i].blue = 255 * (1 - get_number(fp));
 	    break;
 
 	case '2':
