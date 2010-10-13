@@ -10,6 +10,14 @@
 #include "util.h"
 #include "pnmtologo.h"
 
+void draw(char *fb_data,
+          struct fb_fix_screeninfo *finfo,
+          struct fb_var_screeninfo *vinfo);
+
+void draw_logo(char *fb_data,
+               struct fb_fix_screeninfo *finfo,
+               struct fb_var_screeninfo *vinfo);
+
 void draw(char *fb_data, struct fb_fix_screeninfo *finfo, struct fb_var_screeninfo *vinfo)
 {
     unsigned long y, x, location;
