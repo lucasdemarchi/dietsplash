@@ -1,3 +1,6 @@
+#ifndef __DIETSPLASH_PNMTOLOGO_H
+#define __DIETSPLASH_PNMTOLOGO_H
+
 struct color {
     unsigned char red;
     unsigned char green;
@@ -12,3 +15,4 @@ struct image {
 
 struct image *read_image(const char *filename);
 
+#endif
