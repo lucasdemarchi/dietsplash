@@ -55,9 +55,9 @@ static unsigned int get_number255(FILE *fp, unsigned int maxval)
 struct image *read_image(const char *filename)
 {
     FILE *fp;
-    unsigned int i, j;
+    unsigned int i;
     int magic;
-    unsigned int maxval, logo_width, logo_height;
+    unsigned int maxval;
     struct image *logo, *tmp;
 
     /* open image file */
