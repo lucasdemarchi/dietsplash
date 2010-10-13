@@ -1,5 +1,6 @@
 AC_INIT(dietsplash, 0.1)
 AM_INIT_AUTOMAKE([foreign subdir-objects])
+AC_CONFIG_MACRO_DIR([m4])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
