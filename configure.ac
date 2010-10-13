@@ -1,4 +1,4 @@
-AC_INIT(dietsplash, 0.1)
+AC_INIT(dietsplash, 0.1, [lucas.demarchi@profusion.mobi])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability silent-rules tar-pax subdir-objects dist-bzip2])
