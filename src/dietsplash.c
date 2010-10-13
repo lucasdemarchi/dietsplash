@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
     printf("FB: %s\n", finfo.id);
     printf("FB: %dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
 
-    screen_size =  vinfo.xres * vinfo.yres * vinfo.bits_per_pixel / 8;
+    screen_size = finfo.line_length * vinfo.yres;
 
     fb_data = mmap(0, screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (fb_data == MAP_FAILED) {
