@@ -1,8 +1,8 @@
 AC_INIT(dietsplash, 0.1)
-AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability silent-rules tar-pax subdir-objects dist-bzip2])
+AM_SILENT_RULES([yes])
 
 AC_PREFIX_DEFAULT(/bin)
 
