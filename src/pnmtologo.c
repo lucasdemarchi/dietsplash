@@ -44,6 +44,7 @@ static unsigned int get_number(FILE *fp)
     }
     return val;
 }
+
 static unsigned int get_number255(FILE *fp, unsigned int maxval)
 {
     unsigned int val = get_number(fp);
