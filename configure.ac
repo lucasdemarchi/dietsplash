@@ -60,4 +60,9 @@ CC_CHECK_CFLAGS_APPEND([ \
         -Wl,--as-needed \
         -Wl,--gc-sections])
 
+AC_ARG_ENABLE(staticlogo,
+	AC_HELP_STRING([--disable-staticlogo], [disable static default logo]),
+			[enable_staticlogo=${enableval}], [enable_staticlogo="yes"])
+AM_CONDITIONAL(STATICLOGO, test "${enable_staticlogo}" != "no")
+
 AC_OUTPUT(Makefile)
