@@ -10,6 +10,8 @@
 #include "util.h"
 #include "pnmtologo.h"
 
+static const char *default_logo = DATADIR"/default_logo.ppm";
+
 void draw(char *fb_data,
           struct fb_fix_screeninfo *finfo,
           struct fb_var_screeninfo *vinfo);
@@ -51,7 +53,7 @@ void draw_logo(char *fb_data, struct fb_fix_screeninfo *finfo,
     long cy_offset, cx_offset;
     struct image *logo;
 
-    logo = read_image("data/logo_linux_clut224.ppm");
+    logo = read_image(default_logo);
     cx_offset = (vinfo->xres - logo->width) / 2;
     cy_offset = (vinfo->yres - logo->height) / 2;
     
