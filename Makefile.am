@@ -9,7 +9,8 @@ config.sub \
 configure \
 depcomp \
 install-sh \
-missing
+missing \
+src/default_logo.c
 
 bin_PROGRAMS = src/dietsplash
 
