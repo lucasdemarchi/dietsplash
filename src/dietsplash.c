@@ -10,7 +10,11 @@
 #include "util.h"
 #include "pnmtologo.h"
 
-static const char *default_logo = DATADIR"/default_logo.ppm";
+#ifdef LOGOFILE
+static const char *default_logo = LOGOFILE;
+#else
+#include "logo.h"
+#endif
 
 void draw(char *fb_data,
           struct fb_fix_screeninfo *finfo,
@@ -53,7 +57,12 @@ void draw_logo(char *fb_data, struct fb_fix_screeninfo *finfo,
     long cy_offset, cx_offset;
     struct image *logo;
 
+#ifdef LOGOFILE
     logo = read_image(default_logo);
+#else
+    logo = &dietsplash_staticlogo;
+#endif
+
     cx_offset = (vinfo->xres - logo->width) / 2;
     cy_offset = (vinfo->yres - logo->height) / 2;
     
@@ -70,8 +79,9 @@ void draw_logo(char *fb_data, struct fb_fix_screeninfo *finfo,
             *(fb_data + location + 3) = 0;
         }
     }
-
+#ifdef LOGOFILE
     free(logo);
+#endif
 }
 
 int main(int argc, char *argv[])
