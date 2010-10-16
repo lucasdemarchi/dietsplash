@@ -2,4 +2,4 @@
 
 aclocal -I m4 && \
 	automake --add-missing --copy && \
-	autoconf && [ -z "$NOINST" ] && ./configure $@
+	autoconf
