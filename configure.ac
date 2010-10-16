@@ -4,7 +4,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability silent-rules tar-pax subdir-objects dist-bzip2])
 AM_SILENT_RULES([yes])
 
-AC_PREFIX_DEFAULT(/bin)
+AC_PREFIX_DEFAULT(/usr)
 
 COMPILER_FLAGS
 
