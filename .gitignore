@@ -1,0 +1,12 @@
+Makefile
+Makefile.in
+missing
+aclocal.m4
+autom4te.cache
+compile
+configure
+config.status
+config.log
+depcomp
+install-sh
+*.swp
