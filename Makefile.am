@@ -22,7 +22,7 @@ logo = $(abs_top_srcdir)/data/default_logo.ppm
 endif
 
 if MAINTAINER_MODE
-build_datadir = $(abs_top_srcdir)/data
+build_datadir = $(abs_top_builddir)/data
 else
 build_datadir = $(data_dietsplashdir)
 endif
