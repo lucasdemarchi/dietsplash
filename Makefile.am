@@ -11,7 +11,7 @@ depcomp \
 install-sh \
 missing
 
-CLEANFILES = src/logo.h
+CLEANFILES = src/logo.h data/logo.ppm
 
 bin_PROGRAMS = src/dietsplash
 
@@ -25,10 +25,8 @@ data_dietsplashdir = $(datadir)/@PACKAGE@
 
 if MAINTAINER_MODE
 build_datadir = $(abs_top_srcdir)/data
-build_logo    = $(logo)
 else
 build_datadir = $(data_dietsplashdir)
-build_logo    = $(build_datadir)/$(shell basename ${logo})
 endif
 
 AM_CFLAGS = -DDATADIR=\""$(build_datadir)"\"
@@ -41,7 +39,12 @@ if !STATICLOGO
 data_dietsplash_DATA = $(logo)
 EXTRA_DIST = $(data_dietsplash_DATA)
 
-AM_CFLAGS += -DLOGOFILE=\""$(build_logo)"\"
+data_dietsplash_DATA += data/logo.pnm
+AM_CFLAGS += -DLOGOFILE=\""$(build_datadir)/logo.pnm"\"
+
+data/logo.pnm: $(abs_top_builddir)/data/$(shell basename ${logo})
+	$(AM_V_GEN)cd data && $(LN_S) $(shell basename ${logo}) logo.pnm
+
 else
 noinst_PROGRAMS = src/genstaticlogo
 src_dietsplash_SOURCES += src/logo.h
