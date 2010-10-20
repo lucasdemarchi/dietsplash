@@ -39,17 +39,23 @@ src_dietsplash_SOURCES = src/dietsplash.c \
 if !STATICLOGO
 data_dietsplashdir = $(datadir)/@PACKAGE@
 data_dietsplash_DATA = $(logo)
-EXTRA_DIST = $(data_dietsplash_DATA)
+AM_CFLAGS += -DLOGOFILE=\""$(build_datadir)/logo.ppm"\"
 
-data_dietsplash_DATA += data/logo.pnm
-AM_CFLAGS += -DLOGOFILE=\""$(build_datadir)/logo.pnm"\"
+if !MAINTAINER_MODE
+install-data-hook:
+	( cd $(DESTDIR)$(data_dietsplashdir) && \
+		rm -f logo.ppm && \
+		$(LN_S) $(shell basename ${logo}) logo.ppm )
+else
+src/dietsplash.o: makelogo
 
-data/logo.pnm: $(abs_top_builddir)/data/$(shell basename ${logo})
-	$(AM_V_GEN)cd data && $(LN_S) $(shell basename ${logo}) logo.pnm
-
+makelogo: $(logo)
+	$(AM_V_GEN) \
+		( cd $(build_datadir) && rm -f logo.ppm && \
+		$(LN_S) $(logo) logo.ppm )
+endif
 else
 noinst_PROGRAMS = src/genstaticlogo
-src_dietsplash_SOURCES += src/logo.h
 
 src_genstaticlogo_SOURCES = src/genstaticlogo.c \
 			    src/pnmtologo.c \
@@ -62,3 +68,5 @@ src/logo.h: $(logo) src/genstaticlogo
 
 src/dietsplash.o: src/logo.h
 endif
+
+EXTRA_DIST = $(srcdir)/data/default_logo.ppm
