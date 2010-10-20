@@ -33,8 +33,10 @@ AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src
 src_dietsplash_SOURCES = src/dietsplash.c \
 			 src/pnmtologo.c \
 			 src/util.c \
+			 src/log.c \
 			 src/pnmtologo.h \
-			 src/util.h
+			 src/util.h \
+			 src/log.h
 
 if !STATICLOGO
 data_dietsplashdir = $(datadir)/@PACKAGE@
