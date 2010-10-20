@@ -60,5 +60,5 @@ src_genstaticlogo_SOURCES = src/genstaticlogo.c \
 src/logo.h: $(logo) src/genstaticlogo
 	$(AM_V_GEN)src/genstaticlogo $< $@
 
-src/dietsplash.c: src/logo.h
+src/dietsplash.o: src/logo.h
 endif
