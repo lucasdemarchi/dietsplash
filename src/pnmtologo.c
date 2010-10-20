@@ -52,7 +52,7 @@ static unsigned int get_number255(FILE *fp, unsigned int maxval)
     return (255 * val + (maxval/2)) / maxval;
 }
 
-struct image *read_image(const char *filename)
+struct image *ds_read_image(const char *filename)
 {
     FILE *fp;
     unsigned int i;

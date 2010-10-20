@@ -13,6 +13,6 @@ struct image {
     struct color pixels[];
 };
 
-struct image *read_image(const char *filename);
+struct image *ds_read_image(const char *filename);
 
 #endif

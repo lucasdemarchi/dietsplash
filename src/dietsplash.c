@@ -24,7 +24,7 @@ static void draw_logo(char *fb_data, struct fb_fix_screeninfo *finfo,
     struct image *logo;
 
 #ifdef LOGOFILE
-    logo = read_image(default_logo);
+    logo = ds_read_image(default_logo);
 #else
     logo = &dietsplash_staticlogo;
 #endif

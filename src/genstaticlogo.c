@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 	fp_out = stdout;
     }
 
-    logo = read_image(filename_in);
+    logo = ds_read_image(filename_in);
     write_logo_header(fp_out);
     write_logo_properties(fp_out, logo);
     write_logo_data(fp_out, logo);
