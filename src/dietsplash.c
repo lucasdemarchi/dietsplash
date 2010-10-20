@@ -60,6 +60,8 @@ int main(int argc, char *argv[])
     struct fb_var_screeninfo vinfo;
     long screen_size;
 
+    ds_log_init(argv[0]);
+
     fd = open("/dev/fb0", O_RDWR);
     if (fd < 0) {
         crit("open failed -- %s", strerror(errno));
