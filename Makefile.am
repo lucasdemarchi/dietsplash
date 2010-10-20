@@ -21,8 +21,6 @@ else
 logo = $(abs_top_srcdir)/data/default_logo.ppm
 endif
 
-data_dietsplashdir = $(datadir)/@PACKAGE@
-
 if MAINTAINER_MODE
 build_datadir = $(abs_top_srcdir)/data
 else
@@ -36,6 +34,7 @@ src_dietsplash_SOURCES = src/dietsplash.c src/pnmtologo.c src/util.c \
 
 
 if !STATICLOGO
+data_dietsplashdir = $(datadir)/@PACKAGE@
 data_dietsplash_DATA = $(logo)
 EXTRA_DIST = $(data_dietsplash_DATA)
 
