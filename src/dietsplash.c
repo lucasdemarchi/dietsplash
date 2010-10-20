@@ -16,41 +16,7 @@ static const char *default_logo = LOGOFILE;
 #include "logo.h"
 #endif
 
-void draw(char *fb_data,
-          struct fb_fix_screeninfo *finfo,
-          struct fb_var_screeninfo *vinfo);
-
-void draw_logo(char *fb_data,
-               struct fb_fix_screeninfo *finfo,
-               struct fb_var_screeninfo *vinfo);
-
-void draw(char *fb_data, struct fb_fix_screeninfo *finfo, struct fb_var_screeninfo *vinfo)
-{
-    unsigned long y, x, location;
-     for (y = 0; y < vinfo->yres; y++) {
-         for (x = 0; x < vinfo->xres; x++) {
-
-             location = (x+vinfo->xoffset) * (vinfo->bits_per_pixel/8) +
-                        (y+vinfo->yoffset) * finfo->line_length;
-
-             if (vinfo->bits_per_pixel == 32) {
-                 *(fb_data + location) = 100;        // Some blue
-                 *(fb_data + location + 1) = 15+(x-100)/2;     // A little green
-                 *(fb_data + location + 2) = 200-(y-100)/5;    // A lot of red
-                 *(fb_data + location + 3) = 0;      // No transparency
-             } else  { //assume 16bpp
-                 int b = 10;
-                 int g = (x-100)/6;     // A little green
-                 int r = 31-(y-100)/16;    // A lot of red
-                 unsigned short int t = r<<11 | g << 5 | b;
-                 *((unsigned short int*)(fb_data + location)) = t;
-             }
-
-         }
-    }
-}
-
-void draw_logo(char *fb_data, struct fb_fix_screeninfo *finfo,
+static void draw_logo(char *fb_data, struct fb_fix_screeninfo *finfo,
                struct fb_var_screeninfo *vinfo)
 {
     unsigned long i, j;
