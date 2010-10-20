@@ -30,13 +30,14 @@ endif
 AM_CFLAGS = -DDATADIR=\""$(build_datadir)"\"
 AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src
 
-src_dietsplash_SOURCES = src/dietsplash.c \
-			 src/pnmtologo.c \
-			 src/util.c \
+src_dietsplash_SOURCES = \
+			 src/dietsplash.c \
 			 src/log.c \
+			 src/log.h \
+			 src/pnmtologo.c \
 			 src/pnmtologo.h \
-			 src/util.h \
-			 src/log.h
+			 src/util.c \
+			 src/util.h
 
 if !STATICLOGO
 data_dietsplashdir = $(datadir)/@PACKAGE@
@@ -59,7 +60,8 @@ endif
 else
 noinst_PROGRAMS = src/genstaticlogo
 
-src_genstaticlogo_SOURCES = src/genstaticlogo.c \
+src_genstaticlogo_SOURCES = \
+			    src/genstaticlogo.c \
 			    src/pnmtologo.c \
 			    src/pnmtologo.h \
 			    src/util.c \
