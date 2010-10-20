@@ -3,12 +3,14 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <linux/fb.h>
+#include <string.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 
 #include <errno.h>
 #include "util.h"
 #include "pnmtologo.h"
+#include "log.h"
 
 #ifdef LOGOFILE
 static const char *default_logo = LOGOFILE;
@@ -60,27 +62,27 @@ int main(int argc, char *argv[])
 
     fd = open("/dev/fb0", O_RDWR);
     if (fd < 0) {
-        perror("open failed");
+        crit("open failed -- %s", strerror(errno));
         return 1;
     }
 
     if (ioctl(fd, FBIOGET_FSCREENINFO, &finfo) == -1) {
-        perror("Error reading fb fix info");
+        crit("Error reading fb fix info -- %s", strerror(errno));
         return 1;
     }
 
     if (finfo.type != FB_TYPE_PACKED_PIXELS) {
-        fprintf(stderr, "Don't know how to deal with fb type %d", finfo.type);
+        crit("Don't know how to deal with fb type %d", finfo.type);
         return 1;
     }
 
     if (ioctl(fd, FBIOGET_VSCREENINFO, &vinfo) == -1) {
-        perror("Error reading fb var info");
+        crit("Error reading fb var info");
         return 1;
     }
 
-    printf("FB: %s\n", finfo.id);
-    printf("FB: %dx%d, %dbpp\n", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
+    inf("FB %s", finfo.id);
+    inf("FB %dx%d, %dbpp", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
 
     screen_size = finfo.line_length * vinfo.yres;
 
