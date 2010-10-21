@@ -1,0 +1,12 @@
+dietsplash
+==========
+
+Simple bootsplash that aims to adhere to the KISS philosophy. As such, don't
+expect fancy animations while your computer is booting. All that we want is an
+image and hopefully some boot status indication.
+
+BIG FAT WARNING
+***************
+
+It does not work yet. All you'll get if you compile it is a penguin drawn to
+your framebuffer.
