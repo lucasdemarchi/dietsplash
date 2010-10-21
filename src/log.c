@@ -67,10 +67,12 @@ void ds_log_init(const char *argv0)
 {
     _prog = basename(argv0);
     _pid = getpid();
+    inf("paints on");
 }
 
 void ds_log_shutdown(void)
 {
+    inf("paints off");
     _pid = 0;
     _prog = NULL;
 }
