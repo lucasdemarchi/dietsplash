@@ -4,6 +4,7 @@
 #include <stdarg.h>
 
 void ds_log_init(const char *argv0);
+void ds_log_shutdown(void);
 void ds_log(int level, const char *file, int line, const char *func, const char *fmt, ...);
 int ds_log_get_current_level(void);
 

@@ -68,3 +68,9 @@ void ds_log_init(const char *argv0)
     _prog = basename(argv0);
     _pid = getpid();
 }
+
+void ds_log_shutdown(void)
+{
+    _pid = 0;
+    _prog = NULL;
+}
