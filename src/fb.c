@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 #ifdef LOGOFILE
-static const char *logo = LOGOFILE;
+static const char *logo_filename = LOGOFILE;
 #else
 #include "logo.h"
 #endif
@@ -26,7 +26,7 @@ void ds_fb_draw_logo(struct ds_fb *ds_fb)
     struct image *logo;
 
 #ifdef LOGOFILE
-    logo = ds_read_image(default_logo);
+    logo = ds_read_image(logo_filename);
 #else
     logo = &dietsplash_staticlogo;
 #endif
