@@ -32,6 +32,8 @@ AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src
 
 src_dietsplash_SOURCES = \
 			 src/dietsplash.c \
+			 src/fb.c \
+			 src/fb.h \
 			 src/log.c \
 			 src/log.h \
 			 src/pnmtologo.c \
