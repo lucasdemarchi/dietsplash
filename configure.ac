@@ -61,6 +61,11 @@ CC_CHECK_CFLAGS_APPEND([ \
         -Wl,--as-needed \
         -Wl,--gc-sections])
 
+AC_ARG_ENABLE(umountdev, AC_HELP_STRING([--enable-umountdev],
+	                                 [unmount /dev if it was mounted by dietsplash]),
+		[enable_umountdev=${enableval}], [enable_umountdev="no"])
+AM_CONDITIONAL(UMOUNTDEV, test "${enable_umountdev}" == "yes")
+
 AC_ARG_ENABLE(staticlogo, AC_HELP_STRING([--disable-staticlogo],
 	                                 [disable static default logo]),
 		[enable_staticlogo=${enableval}], [enable_staticlogo="yes"])

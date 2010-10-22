@@ -51,10 +51,12 @@ int ds_fs_setup(const char *dev)
 
 int ds_fs_shutdown(void)
 {
+#ifdef DEVTMPFS_UMOUNT_REQUIRED
     if (umount("/dev")) {
         err("Failed to umount /dev");
         return -errno;
     }
+#endif
 
     return 0;
 }

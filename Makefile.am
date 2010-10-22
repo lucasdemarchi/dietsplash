@@ -31,6 +31,11 @@ endif
 
 AM_CFLAGS = -DDATADIR=\""$(build_datadir)"\"
 	    -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\"
+
+if UMOUNTDEV
+AM_CFLAGS += -DDEVTMPFS_UMOUNT_REQUIRED=1
+endif
+
 AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src
 
 src_dietsplash_SOURCES = \
