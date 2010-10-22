@@ -87,7 +87,7 @@ struct image *ds_read_image(const char *filename)
 	default:
 	    die("%s is not a PNM file\n", filename);
     }
-    
+
     logo = malloc(sizeof(*logo));
     if (!logo)
         die("%s\n", strerror(errno));
@@ -103,7 +103,7 @@ struct image *ds_read_image(const char *filename)
 	die("%s\n", strerror(errno));
     }
     logo = tmp;
-    
+
     /* read image data */
     switch (magic) {
 	case '1':
