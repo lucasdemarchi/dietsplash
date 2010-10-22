@@ -29,7 +29,7 @@ build_datadir = $(data_dietsplashdir)
 build_bindir = $(bindir)
 endif
 
-AM_CFLAGS = -DDATADIR=\""$(build_datadir)"\"
+AM_CFLAGS = -DDATADIR=\""$(build_datadir)"\" \
 	    -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\"
 
 if UMOUNTDEV
