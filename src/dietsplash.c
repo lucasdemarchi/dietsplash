@@ -5,10 +5,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifndef REAL_INIT
-# define REAL_INIT "/bin/systemd"
-#endif
-
 struct ds_info {
     struct ds_fb fb;
     bool testing;

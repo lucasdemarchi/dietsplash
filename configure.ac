@@ -80,4 +80,10 @@ if (test "${logo}" != "default"); then
 fi
 AM_CONDITIONAL(CUSTOM_LOGO, test "${logo}" != "default")
 
+AC_ARG_WITH(init, AC_HELP_STRING([--with-realinit=LOGO],
+	                         [specify location of real init. Default is "/bin/systemd"]),
+		[realinit=${withval}], [realinit="/bin/systemd"])
+REAL_INIT="${realinit}"
+AC_SUBST(REAL_INIT)
+
 AC_OUTPUT(Makefile)

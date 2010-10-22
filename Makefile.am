@@ -30,7 +30,8 @@ build_bindir = $(bindir)
 endif
 
 AM_CFLAGS = -DDATADIR=\""$(build_datadir)"\" \
-	    -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\"
+            -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\" \
+            -DREAL_INIT=\""@REAL_INIT@"\"
 
 if UMOUNTDEV
 AM_CFLAGS += -DDEVTMPFS_UMOUNT_REQUIRED=1
