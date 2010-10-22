@@ -103,9 +103,32 @@ int ds_fb_init(struct ds_fb *ds_fb)
         goto close_on_err;
     }
 
+    /* when using dual monitor, set up xoffset and yoffset, so the image is
+     * centralized on both monitors
+     */
+    if (vinfo.xres != vinfo.xres_virtual || vinfo.yres != vinfo.yres_virtual) {
+        vinfo.xoffset = (vinfo.xres_virtual - vinfo.xres) / 2;
+        vinfo.yoffset = (vinfo.yres_virtual - vinfo.yres) / 2;
+
+        vinfo.activate |= FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
+
+        if (ioctl(ds_fb->fd, FBIOPUT_VSCREENINFO, &vinfo) < 0) {
+            err("setting resolution for dual monitor");
+            ret = 1;
+            goto close_on_err;
+        }
+        else {
+            inf("FB xoffset x yoffset, %d x %d", vinfo.xoffset, vinfo.yoffset);
+        }
+
+        ioctl(ds_fb->fd, FBIOGET_VSCREENINFO, &vinfo);
+    }
+
     ds_fb->image_format = BGRA8888;
     ds_fb->xres = vinfo.xres;
     ds_fb->yres = vinfo.yres;
+    ds_fb->xres_virtual = vinfo.xres_virtual;
+    ds_fb->yres_virtual = vinfo.yres_virtual;
     ds_fb->xoffset = vinfo.xoffset;
     ds_fb->yoffset = vinfo.yoffset;
     ds_fb->type = finfo.type;
@@ -114,6 +137,7 @@ int ds_fb_init(struct ds_fb *ds_fb)
 
     inf("FB %s", finfo.id);
     inf("FB %dx%d, %dbpp", vinfo.xres, vinfo.yres, vinfo.bits_per_pixel);
+    inf("FB %dx%d, virtual", vinfo.xres_virtual, vinfo.yres_virtual);
 
     ds_fb->data = mmap(0, ds_fb->screen_size,
                        PROT_READ | PROT_WRITE, MAP_SHARED, ds_fb->fd, 0);

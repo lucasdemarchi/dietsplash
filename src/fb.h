@@ -13,6 +13,8 @@ struct ds_fb {
     long stride;
     int xres;
     int yres;
+    int xres_virtual;
+    int yres_virtual;
     int xoffset;
     int yoffset;
     int type;
