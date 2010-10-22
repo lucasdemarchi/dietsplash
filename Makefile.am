@@ -23,11 +23,14 @@ endif
 
 if MAINTAINER_MODE
 build_datadir = $(abs_top_builddir)/data
+build_bindir = $(abs_top_builddir)/bin
 else
 build_datadir = $(data_dietsplashdir)
+build_bindir = $(bindir)
 endif
 
 AM_CFLAGS = -DDATADIR=\""$(build_datadir)"\"
+	    -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\"
 AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src
 
 src_dietsplash_SOURCES = \
