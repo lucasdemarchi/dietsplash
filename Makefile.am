@@ -39,11 +39,11 @@ endif
 AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src
 
 src_dietsplash_SOURCES = \
-			 src/dietsplash.c \
 			 src/fb.c \
 			 src/fb.h \
 			 src/log.c \
 			 src/log.h \
+			 src/main.c \
 			 src/pnmtologo.c \
 			 src/pnmtologo.h \
 			 src/util.c \
@@ -60,7 +60,7 @@ install-data-hook:
 		rm -f logo.ppm && \
 		$(LN_S) $(shell basename ${logo}) logo.ppm )
 else
-src/dietsplash.o: makelogo
+src/fb.o: makelogo
 
 makelogo: $(logo)
 	$(AM_V_GEN) \
@@ -80,7 +80,7 @@ src_genstaticlogo_SOURCES = \
 src/logo.h: $(logo) src/genstaticlogo
 	$(AM_V_GEN)src/genstaticlogo $< $@
 
-src/dietsplash.o: src/logo.h
+src/fb.o: src/logo.h
 endif
 
 EXTRA_DIST = $(srcdir)/data/default_logo.ppm
