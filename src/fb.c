@@ -1,6 +1,7 @@
 #include "log.h"
 #include "fb.h"
 #include "pnmtologo.h"
+#include "util.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -55,6 +56,12 @@ int ds_fb_init(struct ds_fb *ds_fb)
     int ret = 0;
     struct fb_fix_screeninfo finfo;
     struct fb_var_screeninfo vinfo;
+
+    ds_fb->need_fs_setup = ds_fs_setup("/dev/fb0");
+    if (ds_fb->need_fs_setup < 0) {
+        ret = 1;
+        goto ret_on_err;
+    }
 
     ds_fb->fd = open("/dev/fb0", O_RDWR);
     if (ds_fb->fd < 0) {
@@ -145,5 +152,6 @@ int ds_fb_shutdown(struct ds_fb *ds_fb)
         ret |= errno;
     }
 
+    ret |= -ds_fs_shutdown();
     return -ret;
 }

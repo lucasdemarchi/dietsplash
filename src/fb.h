@@ -1,6 +1,8 @@
 #ifndef __DIETSPLASH_FB_H
 #define __DIETSPLASH_FB_H
 
+#include <stdbool.h>
+
 enum ds_image_format {
     BGRA8888
 };
@@ -16,6 +18,7 @@ struct ds_fb {
     int type;
     char *data;
     enum ds_image_format image_format;
+    bool need_fs_setup;
 };
 
 void ds_fb_draw_logo(struct ds_fb *ds_fb);
