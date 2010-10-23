@@ -29,4 +29,8 @@ void ds_fb_draw_logo(struct ds_fb *ds_fb);
 int ds_fb_init(struct ds_fb *ds_fb);
 int ds_fb_shutdown(struct ds_fb *ds_fb);
 
+int ds_fb_console_on(struct ds_fb *ds_fb);
+int ds_fb_console_off(struct ds_fb *ds_fb);
+
+
 #endif

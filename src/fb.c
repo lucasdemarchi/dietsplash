@@ -13,6 +13,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <termios.h>
 #include <unistd.h>
 
 #ifdef LOGOFILE
@@ -181,6 +182,80 @@ int ds_fb_shutdown(struct ds_fb *ds_fb)
     return -ret;
 }
 
+static struct termios term_attributes_orig;
+static int            term_attributes_saved;
+static struct termios locked_term_attributes_orig;
+static int            locked_term_attributes_saved;
+
+static int _console_input_unbuffered_set(struct ds_fb *ds_fb)
+{
+    struct termios term_attributes;
+    struct termios locked_term_attributes;
+
+    tcgetattr(ds_fb->console_dev, &term_attributes);
+    term_attributes_orig = term_attributes;
+
+    cfmakeraw(&term_attributes);
+    /* Make return output new line like canonical mode */
+    term_attributes.c_iflag |= ICRNL;
+    /* Make \n return go to the beginning of the next line */
+    term_attributes.c_oflag |= ONLCR | OPOST;
+
+    if (tcsetattr (ds_fb->console_dev, TCSANOW, &term_attributes) != 0)
+        return -1;
+
+    term_attributes_saved = 1;
+
+    if (ioctl(ds_fb->console_dev,
+              TIOCGLCKTRMIOS, &locked_term_attributes) == 0) {
+        locked_term_attributes_orig = locked_term_attributes;
+
+        memset (&locked_term_attributes, 0xff, sizeof (locked_term_attributes));
+        if (ioctl(ds_fb->console_dev,
+                  TIOCSLCKTRMIOS, &locked_term_attributes) == 0)
+            locked_term_attributes_saved = 1;
+        else
+            err("Failed to save terminal settings -- %m");
+    }
+
+    return 0;
+}
+
+static int _console_input_restore(struct ds_fb *ds_fb)
+{
+    struct termios term_attributes;
+
+    if (!term_attributes_saved)
+        return -1;
+
+    if (locked_term_attributes_saved) {
+        if (ioctl(ds_fb->console_dev,
+                  TIOCSLCKTRMIOS, &locked_term_attributes_orig) == -1)
+            err("Failed to unlock terminal settings -- %m");
+
+        locked_term_attributes_saved = 0;
+    }
+
+    if (!(term_attributes_orig.c_lflag & ICANON)) {
+        tcgetattr(ds_fb->console_dev, &term_attributes);
+        term_attributes.c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
+        term_attributes.c_oflag |= OPOST;
+        term_attributes.c_lflag |= ECHO | ICANON | ISIG | IEXTEN;
+    }
+    else {
+        term_attributes = term_attributes_orig;
+    }
+
+    if (tcsetattr(ds_fb->console_dev, TCSAFLUSH, &term_attributes) == -1) {
+        err("Failed to restore console attributes");
+        return -1;
+    }
+
+    term_attributes_saved = 0;
+
+    return 0;
+}
+
 static const char *tty_path = "/dev/tty0";
 
 /**
@@ -202,7 +277,7 @@ int ds_fb_console_off(struct ds_fb *ds_fb)
     if (ioctl(ds_fb->console_dev, KDSETMODE, KD_GRAPHICS) == -1)
         goto close_on_err;
 
-    return 0;
+    return _console_input_unbuffered_set(ds_fb);
 
 close_on_err:
     ret = errno;
@@ -221,7 +296,7 @@ int ds_fb_console_on(struct ds_fb *ds_fb)
     if (ioctl(ds_fb->console_dev, KDSETMODE, KD_TEXT) == -1)
         goto close_on_err;
 
-    return 0;
+    return _console_input_restore(ds_fb);
 
 close_on_err:
     ret = errno;
