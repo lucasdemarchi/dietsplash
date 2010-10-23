@@ -30,9 +30,11 @@ int main(int argc, char *argv[])
     if (ds_fb_init(&ds_info.fb))
         return 1;
 
+    ds_fb_console_off(&ds_info.fb);
     ds_fb_draw_logo(&ds_info.fb);
 
     ds_fb_shutdown(&ds_info.fb);
+    ds_fb_console_on(&ds_info.fb);
     ds_log_shutdown();
 
     return 0;

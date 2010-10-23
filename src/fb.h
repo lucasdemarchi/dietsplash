@@ -21,6 +21,8 @@ struct ds_fb {
     char *data;
     enum ds_image_format image_format;
     bool need_fs_setup;
+
+    int console_dev;
 };
 
 void ds_fb_draw_logo(struct ds_fb *ds_fb);

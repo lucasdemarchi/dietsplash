@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <linux/fb.h>
+#include <linux/kd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -177,5 +178,55 @@ int ds_fb_shutdown(struct ds_fb *ds_fb)
     }
 
     ret |= -ds_fs_shutdown();
+    return -ret;
+}
+
+static const char *tty_path = "/dev/tty0";
+
+/**
+ * Let console in graphics mode, effectivelly disabling fbcon. This is
+ * accomplished by calling ioctl(fd, KDSETMODE, KD_GRAPHICS)
+ *
+ * @param ds_fb the framebuffer identifier in dietsplash
+ */
+int ds_fb_console_off(struct ds_fb *ds_fb)
+{
+    int ret;
+
+    ds_fb->console_dev = open(tty_path, O_WRONLY);
+    if (ds_fb->console_dev < 0) {
+        ret = errno;
+        goto exit_on_err;
+    }
+
+    if (ioctl(ds_fb->console_dev, KDSETMODE, KD_GRAPHICS) == -1)
+        goto close_on_err;
+
+    return 0;
+
+close_on_err:
+    ret = errno;
+    close(ds_fb->console_dev);
+
+exit_on_err:
+    err("Failed to go in graphics mode -- %m");
+    return -ret;
+}
+
+int ds_fb_console_on(struct ds_fb *ds_fb)
+{
+    int ret;
+    assert(ds_fb->console_dev);
+
+    if (ioctl(ds_fb->console_dev, KDSETMODE, KD_TEXT) == -1)
+        goto close_on_err;
+
+    return 0;
+
+close_on_err:
+    ret = errno;
+    close(ds_fb->console_dev);
+
+    err("Failed to return to text mode -- %m");
     return -ret;
 }
