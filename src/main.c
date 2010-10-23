@@ -33,11 +33,12 @@ int main(int argc, char *argv[])
     ds_fb_console_off(&ds_info.fb);
     ds_fb_draw_logo(&ds_info.fb);
 
-    if (ds_info.testing)
+    if (ds_info.testing) {
         sleep(5);
+        ds_fb_console_on(&ds_info.fb);
+    }
 
     ds_fb_shutdown(&ds_info.fb);
-    ds_fb_console_on(&ds_info.fb);
     ds_log_shutdown();
 
     return 0;
