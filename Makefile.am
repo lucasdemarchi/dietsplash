@@ -24,12 +24,14 @@ endif
 if MAINTAINER_MODE
 build_datadir = $(abs_top_builddir)/data
 build_bindir = $(abs_top_builddir)/bin
+AM_CFLAGS = -DLOGLEVEL=4
 else
 build_datadir = $(data_dietsplashdir)
 build_bindir = $(bindir)
+AM_CFLAGS = -DLOGLEVEL=0
 endif
 
-AM_CFLAGS = -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\" \
+AM_CFLAGS += -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\" \
             -DREAL_INIT=\""@REAL_INIT@"\"
 
 if UMOUNTDEV

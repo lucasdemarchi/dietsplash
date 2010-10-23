@@ -13,7 +13,7 @@ static const char *_log_level_names[] = {
     "DEBUG"
 };
 static const size_t _log_level_names_count = sizeof(_log_level_names) / sizeof(_log_level_names[0]);
-static int _log_level = 3;
+static int _log_level = LOGLEVEL;
 static const char *_prog;
 static pid_t _pid;
 
