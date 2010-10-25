@@ -158,6 +158,9 @@ int ds_console_setup(void)
 {
     int console_dev;
 
+    if (ds_fs_setup(tty_path) < 0)
+        goto return_on_err;
+
     console_dev = open(tty_path, O_WRONLY);
     if (console_dev < 0)
         goto return_on_err;
@@ -169,6 +172,8 @@ int ds_console_setup(void)
         goto close_on_err;
 
     close(console_dev);
+    ds_fs_shutdown();
+
     return 0;
 
 close_on_err:
@@ -183,6 +188,9 @@ int ds_console_restore(void)
 {
     int console_dev;
 
+    if (ds_fs_setup(tty_path) < 0)
+        goto return_on_err;
+
     console_dev = open(tty_path, O_WRONLY);
     if (console_dev < 0)
         goto return_on_err;
@@ -194,6 +202,8 @@ int ds_console_restore(void)
         goto close_on_err;
 
     close(console_dev);
+    ds_fs_shutdown();
+
     return 0;
 
 close_on_err:
