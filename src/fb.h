@@ -20,7 +20,6 @@ struct ds_fb {
     int type;
     char *data;
     enum ds_image_format image_format;
-    bool need_fs_setup;
 
     int console_dev;
 };

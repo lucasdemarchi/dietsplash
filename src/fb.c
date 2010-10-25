@@ -59,11 +59,9 @@ int ds_fb_init(struct ds_fb *ds_fb)
     struct fb_fix_screeninfo finfo;
     struct fb_var_screeninfo vinfo;
 
-    ds_fb->need_fs_setup = ds_fs_setup("/dev/fb0");
-    if (ds_fb->need_fs_setup < 0) {
-        ret = 1;
+    ret = ds_fs_setup("/dev/fb0");
+    if (ret < 0)
         goto ret_on_err;
-    }
 
     ds_fb->fd = open("/dev/fb0", O_RDWR);
     if (ds_fb->fd < 0) {
@@ -167,7 +165,7 @@ int ds_fb_shutdown(struct ds_fb *ds_fb)
     // we unmap, and log in case of error, but continue shutting down
     if(munmap(ds_fb->data, ds_fb->screen_size) == -1) {
         err("fb munmap -- %m");
-        ret = errno;
+        ret = -1;
     }
 
     ds_fb->data = NULL;
@@ -175,11 +173,13 @@ int ds_fb_shutdown(struct ds_fb *ds_fb)
 
     if (close(ds_fb->fd) == -1) {
         err("fb closing fd -- %m");
-        ret |= errno;
+        ret = -1;
     }
 
-    ret |= -ds_fs_shutdown();
-    return -ret;
+    if (ds_fs_shutdown() < 0)
+        ret = -1;
+
+    return ret;
 }
 
 static struct termios term_attributes_orig;
