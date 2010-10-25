@@ -8,7 +8,6 @@ enum ds_image_format {
 };
 
 struct ds_fb {
-    int fd;
     long screen_size;
     long stride;
     int xres;

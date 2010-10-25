@@ -53,7 +53,7 @@ void ds_fb_draw_logo(struct ds_fb *ds_fb)
 
 int ds_fb_init(struct ds_fb *ds_fb)
 {
-    int ret = 0;
+    int ret = 0, fd;
     struct fb_fix_screeninfo finfo;
     struct fb_var_screeninfo vinfo;
 
@@ -61,14 +61,14 @@ int ds_fb_init(struct ds_fb *ds_fb)
     if (ret < 0)
         goto ret_on_err;
 
-    ds_fb->fd = open("/dev/fb0", O_RDWR);
-    if (ds_fb->fd < 0) {
+    fd = open("/dev/fb0", O_RDWR);
+    if (fd < 0) {
         crit("open failed -- %m");
         ret = -errno;
         goto ret_on_err;
     }
 
-    if (ioctl(ds_fb->fd, FBIOGET_FSCREENINFO, &finfo) == -1) {
+    if (ioctl(fd, FBIOGET_FSCREENINFO, &finfo) == -1) {
         crit("reading fb fix info -- %m");
         ret = -errno;
         goto close_on_err;
@@ -80,7 +80,7 @@ int ds_fb_init(struct ds_fb *ds_fb)
         goto close_on_err;
     }
 
-    if (ioctl(ds_fb->fd, FBIOGET_VSCREENINFO, &vinfo) == -1) {
+    if (ioctl(fd, FBIOGET_VSCREENINFO, &vinfo) == -1) {
         crit("reading fb var info -- %m");
         ret = -errno;
         goto close_on_err;
@@ -110,12 +110,12 @@ int ds_fb_init(struct ds_fb *ds_fb)
 
         vinfo.activate |= FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
 
-        if (ioctl(ds_fb->fd, FBIOPUT_VSCREENINFO, &vinfo) < 0) {
+        if (ioctl(fd, FBIOPUT_VSCREENINFO, &vinfo) < 0) {
             err("setting resolution for dual monitor");
         }
         else {
             inf("FB xoffset x yoffset, %d x %d", vinfo.xoffset, vinfo.yoffset);
-            ioctl(ds_fb->fd, FBIOGET_VSCREENINFO, &vinfo);
+            ioctl(fd, FBIOGET_VSCREENINFO, &vinfo);
         }
     }
 
@@ -135,7 +135,7 @@ int ds_fb_init(struct ds_fb *ds_fb)
     inf("FB %dx%d, virtual", vinfo.xres_virtual, vinfo.yres_virtual);
 
     ds_fb->data = mmap(0, ds_fb->screen_size,
-                       PROT_READ | PROT_WRITE, MAP_SHARED, ds_fb->fd, 0);
+                       PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
     if (ds_fb->data == MAP_FAILED) {
         crit("fb mmapping -- %m");
@@ -143,10 +143,13 @@ int ds_fb_init(struct ds_fb *ds_fb)
         goto close_on_err;
     }
 
+    if (close(fd) == -1)
+        err("fb closing fd -- %m");
+
     return 0;
 
 close_on_err:
-    close(ds_fb->fd);
+    close(fd);
 ret_on_err:
     return ret;
 }
@@ -165,11 +168,6 @@ int ds_fb_shutdown(struct ds_fb *ds_fb)
 
     ds_fb->data = NULL;
     ds_fb->screen_size = 0;
-
-    if (close(ds_fb->fd) == -1) {
-        err("fb closing fd -- %m");
-        ret = -1;
-    }
 
     if (ds_fs_shutdown() < 0)
         ret = -1;
