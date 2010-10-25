@@ -38,15 +38,13 @@ static int _devtmpfs_mounted;
  */
 int ds_fs_setup(const char *dev)
 {
-    int ret;
     if (!access(dev, R_OK | W_OK))
         return 0;
 
     if (_devtmpfs_mounted)
         return -1;
 
-    ret =  mount("devtmpfs", "/dev", "devtmpfs", MS_NOSUID, "mode=755");
-    if (ret) {
+    if (mount("devtmpfs", "/dev", "devtmpfs", MS_NOSUID, "mode=755")) {
         err("Failed work-around by mounting /dev -- %m");
         return -1;
     }
