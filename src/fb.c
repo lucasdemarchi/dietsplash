@@ -114,14 +114,11 @@ int ds_fb_init(struct ds_fb *ds_fb)
 
         if (ioctl(ds_fb->fd, FBIOPUT_VSCREENINFO, &vinfo) < 0) {
             err("setting resolution for dual monitor");
-            ret = 1;
-            goto close_on_err;
         }
         else {
             inf("FB xoffset x yoffset, %d x %d", vinfo.xoffset, vinfo.yoffset);
+            ioctl(ds_fb->fd, FBIOGET_VSCREENINFO, &vinfo);
         }
-
-        ioctl(ds_fb->fd, FBIOGET_VSCREENINFO, &vinfo);
     }
 
     ds_fb->image_format = BGRA8888;
