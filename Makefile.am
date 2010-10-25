@@ -13,7 +13,9 @@ missing
 
 CLEANFILES = src/logo.h data/logo.ppm
 
-bin_PROGRAMS = src/dietsplash
+rootbindir = @rootdir@/bin
+
+rootbin_PROGRAMS = src/dietsplash
 
 if CUSTOM_LOGO
 logo = @LOGO_PATH@
@@ -27,7 +29,7 @@ build_bindir = $(abs_top_builddir)/src
 AM_CFLAGS = -DLOGLEVEL=4
 else
 build_datadir = $(data_dietsplashdir)
-build_bindir = $(bindir)
+build_bindir = $(rootbindir)
 AM_CFLAGS = -DLOGLEVEL=0
 endif
 

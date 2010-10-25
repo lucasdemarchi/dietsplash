@@ -86,4 +86,10 @@ AC_ARG_WITH(init, AC_HELP_STRING([--with-realinit=INIT],
 REAL_INIT="${realinit}"
 AC_SUBST(REAL_INIT)
 
+AC_ARG_WITH([rootdir],
+        AS_HELP_STRING([--with-rootdir=DIR], [Root directory for files necessary for boot]),
+        [],
+        [with_rootdir=${ac_default_prefix}])
+AC_SUBST([rootdir], [$with_rootdir])
+
 AC_OUTPUT(Makefile)
