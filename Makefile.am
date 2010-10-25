@@ -23,7 +23,7 @@ endif
 
 if MAINTAINER_MODE
 build_datadir = $(abs_top_builddir)/data
-build_bindir = $(abs_top_builddir)/bin
+build_bindir = $(abs_top_builddir)/src
 AM_CFLAGS = -DLOGLEVEL=4
 else
 build_datadir = $(data_dietsplashdir)
