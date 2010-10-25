@@ -1,5 +1,6 @@
 #include "fb.h"
 #include "log.h"
+#include "util.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -30,12 +31,12 @@ int main(int argc, char *argv[])
     if (ds_fb_init(&ds_info.fb))
         return 1;
 
-    ds_fb_console_off(&ds_info.fb);
+    ds_console_setup();
     ds_fb_draw_logo(&ds_info.fb);
 
     if (ds_info.testing) {
         sleep(5);
-        ds_fb_console_on(&ds_info.fb);
+        ds_console_restore();
     }
 
     ds_fb_shutdown(&ds_info.fb);

@@ -20,16 +20,10 @@ struct ds_fb {
     int type;
     char *data;
     enum ds_image_format image_format;
-
-    int console_dev;
 };
 
 void ds_fb_draw_logo(struct ds_fb *ds_fb);
 int ds_fb_init(struct ds_fb *ds_fb);
 int ds_fb_shutdown(struct ds_fb *ds_fb);
-
-int ds_fb_console_on(struct ds_fb *ds_fb);
-int ds_fb_console_off(struct ds_fb *ds_fb);
-
 
 #endif
