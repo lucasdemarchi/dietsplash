@@ -3,6 +3,7 @@
 #include "util.h"
 
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -24,8 +25,16 @@ int main(int argc, char *argv[])
 
     if (!ds_info.testing) {
         pid = fork();
-        if (pid)
+        if (pid) {
+            char *argv0 = argv[0];
+            /* first, change our argv[0], then exec */
+            argv[0] = basename(REAL_INIT);
             execv(REAL_INIT, argv);
+
+            argv[0] = argv0;
+            err("Failed to exec %s", REAL_INIT);
+            exit(1);
+        }
     }
 
     if (ds_fb_init(&ds_info.fb))
