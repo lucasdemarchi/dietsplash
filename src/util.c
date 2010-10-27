@@ -146,6 +146,29 @@ static int _console_input_restore(int console_dev)
     return 0;
 }
 
+#define DS_ESC_CURSOR_HIDE "\033[?25l"
+#define DS_ESC_CURSOR_SHOW "\033[?25h"
+
+static void _console_cursor_hide(int fd)
+{
+    /* FIXME: this can have a bad behavior if user redirected console
+     * to a device other than the VGA. The correct way would be to parse
+     * the kernel cmd line.
+     */
+
+    write(fd, DS_ESC_CURSOR_HIDE, strlen(DS_ESC_CURSOR_HIDE));
+}
+
+static void _console_cursor_show(int fd)
+{
+    /* FIXME: this can have a bad behavior if user redirected console
+     * to a device other than the VGA. The correct way would be to parse
+     * the kernel cmd line.
+     */
+
+    write(fd, DS_ESC_CURSOR_SHOW, strlen(DS_ESC_CURSOR_SHOW));
+}
+
 static const char *tty_path = "/dev/tty0";
 
 /**
@@ -164,6 +187,11 @@ int ds_console_setup(void)
     console_dev = open(tty_path, O_WRONLY);
     if (console_dev < 0)
         goto return_on_err;
+
+    /* Hide cursor, so when going to graphics mode it does not remain drawn on
+     * display
+     */
+    _console_cursor_hide(console_dev);
 
     if (_console_input_unbuffered_set(console_dev) < 0)
         goto close_on_err;
@@ -194,6 +222,12 @@ int ds_console_restore(void)
     console_dev = open(tty_path, O_WRONLY);
     if (console_dev < 0)
         goto return_on_err;
+
+    /* We really don't know if cursor was visible before going do graphics mode,
+     * but since we are supposed to go to "text mode", we enable the cursor
+     * here.
+     */
+    _console_cursor_show(console_dev);
 
     if (ioctl(console_dev, KDSETMODE, KD_TEXT) == -1)
         goto close_on_err;
