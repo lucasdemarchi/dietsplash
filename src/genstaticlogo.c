@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static const char *USAGE = "USAGE: genstaticlogo static_struct_name file.ppm outfile.c";
+static const char *USAGE = "USAGE: genstaticlogo static_struct_name outfile.c file.ppm";
 
 static inline void write_logo_header(FILE *out, const char *struct_name)
 {
@@ -59,8 +59,8 @@ int main(int argc, char *argv[])
         die("%s", USAGE);
 
     static_struct_name = argv[1];
-    filename_in = argv[2];
-    filename_out = argv[3];
+    filename_out = argv[2];
+    filename_in = argv[3];
 
     /* open logo file */
     if (strcmp(filename_out, "-")) {
