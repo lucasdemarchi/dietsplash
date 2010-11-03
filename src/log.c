@@ -1,4 +1,5 @@
 #include "log.h"
+#include "util.h"
 
 #include <string.h>
 #include <unistd.h>
@@ -12,7 +13,7 @@ static const char *_log_level_names[] = {
     "INFO",
     "DEBUG"
 };
-static const size_t _log_level_names_count = sizeof(_log_level_names) / sizeof(_log_level_names[0]);
+
 static int _log_level = LOGLEVEL;
 static const char *_prog;
 static pid_t _pid;
@@ -24,7 +25,7 @@ static void _logv(int level, const char *file, int line, const char *func, const
     if (level > _log_level)
         return;
 
-    if (level >= 0 && (size_t)level < _log_level_names_count)
+    if (level >= 0 && (size_t)level < ARRAY_SIZE(_log_level_names))
         level_name = _log_level_names[level];
     else
         level_name = NULL;

@@ -1,6 +1,8 @@
 #ifndef __DIETSPLASH_UTIL_H
 #define __DIETSPLASH_UTIL_H
 
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+
 #define DIE_PREFIX "[" PACKAGE_NAME "] ERR: "
 #define LOG_SUFFIX "\n"
 
