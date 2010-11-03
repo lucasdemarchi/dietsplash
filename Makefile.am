@@ -82,7 +82,7 @@ src_genstaticlogo_SOURCES = \
 			    src/util.h
 
 src/logo.h: $(logo) src/genstaticlogo
-	$(AM_V_GEN)src/genstaticlogo $< $@
+	$(AM_V_GEN)src/genstaticlogo dietsplash_staticlogo $< $@
 
 src/fb.o: src/logo.h
 endif
