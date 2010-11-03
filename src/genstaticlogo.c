@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static const char *USAGE = "USAGE: genstaticlogo static_struct_name file.ppm <file.c>";
+static const char *USAGE = "USAGE: genstaticlogo static_struct_name file.ppm outfile.c";
 
 static inline void write_logo_header(FILE *out, const char *struct_name)
 {
@@ -55,16 +55,15 @@ int main(int argc, char *argv[])
     const char *static_struct_name;
     static FILE *fp_out;
 
-    if (argc < 3 || argc > 4)
+    if (argc < 4)
         die("%s", USAGE);
 
     static_struct_name = argv[1];
     filename_in = argv[2];
-    if (argc == 4)
-        filename_out = argv[3];
+    filename_out = argv[3];
 
     /* open logo file */
-    if (filename_out && strcmp(filename_out, "-")) {
+    if (strcmp(filename_out, "-")) {
 	fp_out = fopen(filename_out, "w");
 	if (!fp_out)
 	    die("Cannot create file %s: %s\n", filename_out, strerror(errno));
