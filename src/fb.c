@@ -126,23 +126,13 @@ int ds_fb_init(struct ds_fb *ds_fb)
         goto close_on_err;
     }
 
-    /* when using dual monitor, set up xoffset and yoffset, so the image is
-     * centralized on both monitors
+    /* dual monitor does not plays well with framebuffer. Logo will be
+     * centralized with regard to visible resolution, so it might not be
+     * centralized in all monitors
      */
-    if (vinfo.xres != vinfo.xres_virtual || vinfo.yres != vinfo.yres_virtual) {
-        vinfo.xoffset = (vinfo.xres_virtual - vinfo.xres) / 2;
-        vinfo.yoffset = (vinfo.yres_virtual - vinfo.yres) / 2;
-
-        vinfo.activate |= FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
-
-        if (ioctl(fd, FBIOPUT_VSCREENINFO, &vinfo) < 0) {
-            err("setting resolution for dual monitor");
-        }
-        else {
-            inf("FB xoffset x yoffset, %d x %d", vinfo.xoffset, vinfo.yoffset);
-            ioctl(fd, FBIOGET_VSCREENINFO, &vinfo);
-        }
-    }
+    if (vinfo.xres != vinfo.xres_virtual || vinfo.yres != vinfo.yres_virtual)
+        inf("Virtual resolution is not the same of visible one. Logo will be " \
+            "centralized with regard to visible resolution");
 
     ds_fb->image_format = BGRA8888;
     ds_fb->xres = vinfo.xres;
