@@ -61,16 +61,19 @@ CC_CHECK_CFLAGS_APPEND([ \
         -Wl,--as-needed \
         -Wl,--gc-sections])
 
+################################# Umount /dev
 AC_ARG_ENABLE(umountdev, AC_HELP_STRING([--enable-umountdev],
 	                                 [unmount /dev if it was mounted by dietsplash]),
 		[enable_umountdev=${enableval}], [enable_umountdev="no"])
 AM_CONDITIONAL(UMOUNTDEV, test "${enable_umountdev}" == "yes")
 
+################################# Static logo
 AC_ARG_ENABLE(staticlogo, AC_HELP_STRING([--disable-staticlogo],
 	                                 [disable static default logo]),
 		[enable_staticlogo=${enableval}], [enable_staticlogo="yes"])
 AM_CONDITIONAL(STATICLOGO, test "${enable_staticlogo}" != "no")
 
+################################# Custom logo
 AC_ARG_WITH(logo, AC_HELP_STRING([--with-logo=LOGO],
 	                         [specify location of logo to use or "default" for default logo]),
 		[logo=${withval}], [logo="default"])
@@ -80,16 +83,20 @@ if (test "${logo}" != "default"); then
 fi
 AM_CONDITIONAL(CUSTOM_LOGO, test "${logo}" != "default")
 
+################################# Real init
 AC_ARG_WITH(init, AC_HELP_STRING([--with-realinit=INIT],
 	                         [specify location of real init. Default is "/bin/systemd"]),
 		[realinit=${withval}], [realinit="/bin/systemd"])
 REAL_INIT="${realinit}"
 AC_SUBST(REAL_INIT)
 
+################################# Root dir
 AC_ARG_WITH([rootdir],
         AS_HELP_STRING([--with-rootdir=DIR], [Root directory for files necessary for boot]),
         [],
         [with_rootdir=${ac_default_prefix}])
 AC_SUBST([rootdir], [$with_rootdir])
 
+
+#################################
 AC_OUTPUT(Makefile)
