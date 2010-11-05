@@ -93,12 +93,12 @@ void ds_log_init(const char *argv0)
 {
     _prog = basename(argv0);
     _pid = getpid();
-    inf("paints on");
+    inf("pants on");
 }
 
 void ds_log_shutdown(void)
 {
-    inf("paints off");
+    inf("pants off");
     _pid = 0;
     _prog = NULL;
 }
