@@ -23,6 +23,8 @@ else
 logo = $(abs_top_srcdir)/data/default_logo.ppm
 endif
 
+anim = $(abs_top_srcdir)/data/default_anim
+
 if MAINTAINER_MODE
 build_datadir = $(abs_top_builddir)/data
 build_bindir = $(abs_top_builddir)/src
@@ -84,7 +86,18 @@ src_genstaticlogo_SOURCES = \
 src/logo.h: $(logo) src/genstaticlogo
 	$(AM_V_GEN)src/genstaticlogo dietsplash_staticlogo $@ $<
 
-src/fb.o: src/logo.h
+src/anim.h: src/genstaticlogo
+	$(AM_V_GEN)src/genstaticlogo dietsplash_staticanim $@ \
+		$(srcdir)/data/default_anim/01.ppm \
+		$(srcdir)/data/default_anim/02.ppm \
+		$(srcdir)/data/default_anim/03.ppm \
+		$(srcdir)/data/default_anim/04.ppm
+
+src/fb.o: src/logo.h src/anim.h
 endif
 
-EXTRA_DIST = $(srcdir)/data/default_logo.ppm
+EXTRA_DIST = $(srcdir)/data/default_logo.ppm \
+	     $(srcdir)/data/default_anim/01.ppm \
+	     $(srcdir)/data/default_anim/02.ppm \
+	     $(srcdir)/data/default_anim/03.ppm \
+	     $(srcdir)/data/default_anim/04.ppm

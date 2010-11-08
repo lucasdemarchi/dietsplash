@@ -43,6 +43,7 @@
 static const char *logo_filename = LOGOFILE;
 #else
 #include "logo.h"
+#include "anim.h"
 #endif
 
 void ds_fb_draw_logo(struct ds_fb *ds_fb)
@@ -73,6 +74,38 @@ void ds_fb_draw_logo(struct ds_fb *ds_fb)
     }
 #ifdef LOGOFILE
     free(logo);
+#endif
+}
+
+void ds_fb_anim_step(struct ds_fb *ds_fb)
+{
+#ifndef LOGOFILE
+    static int curidx;
+    static int inc = 1;
+    struct image *logo = dietsplash_staticanim[curidx];
+    long cy_offset, cx_offset;
+    unsigned long i, j;
+
+    inf("%d", curidx);
+    curidx += inc;
+    if (!curidx || curidx == ARRAY_SIZE(dietsplash_staticanim) - 1)
+        inc *= -1;
+
+    cx_offset = (ds_fb->xres - logo->width) / 2;
+    cy_offset = (ds_fb->yres - logo->height) / 2;
+
+    for (j = 0; j < logo->height; j++) {
+        for (i = 0; i < logo->width; i++) {
+            long location = ((i + ds_fb->xoffset + cx_offset) << 2) +
+                            (j + ds_fb->yoffset + cy_offset) * ds_fb->stride;
+
+            *(ds_fb->data + location)     = logo->pixels[j * logo->width + i].blue;
+            *(ds_fb->data + location + 1) = logo->pixels[j * logo->width + i].green;
+            *(ds_fb->data + location + 2) = logo->pixels[j * logo->width + i].red;
+            *(ds_fb->data + location + 3) = 0;
+        }
+    }
+
 #endif
 }
 

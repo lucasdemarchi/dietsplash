@@ -69,7 +69,11 @@ int main(int argc, char *argv[])
     ds_fb_draw_logo(&ds_info.fb);
 
     if (ds_info.testing) {
-        sleep(5);
+        int i;
+        for (i = 0; i < 20; i++) {
+            ds_fb_anim_step(&ds_info.fb);
+            usleep(250 * 1000);
+        }
         ds_console_restore();
     }
 

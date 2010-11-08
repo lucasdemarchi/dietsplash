@@ -47,6 +47,7 @@ struct ds_fb {
 };
 
 void ds_fb_draw_logo(struct ds_fb *ds_fb);
+void ds_fb_anim_step(struct ds_fb *ds_fb);
 int ds_fb_init(struct ds_fb *ds_fb);
 int ds_fb_shutdown(struct ds_fb *ds_fb);
 
