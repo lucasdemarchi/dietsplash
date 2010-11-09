@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     }
 
     if (ds_fb_init(&ds_info.fb))
-        return 1;
+        goto err_on_fb;
 
     ds_console_setup();
     ds_fb_draw_logo(&ds_info.fb);
@@ -77,4 +77,9 @@ int main(int argc, char *argv[])
     ds_log_shutdown();
 
     return 0;
+
+err_on_fb:
+    ds_log_shutdown();
+
+    return 1;
 }
