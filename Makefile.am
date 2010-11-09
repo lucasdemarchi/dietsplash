@@ -43,6 +43,8 @@ endif
 AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src
 
 src_dietsplash_SOURCES = \
+			 src/events.c \
+			 src/events.h \
 			 src/fb.c \
 			 src/fb.h \
 			 src/log.c \

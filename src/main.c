@@ -23,6 +23,7 @@
  *
  */
 
+#include "events.h"
 #include "fb.h"
 #include "log.h"
 #include "util.h"
@@ -62,6 +63,9 @@ int main(int argc, char *argv[])
         }
     }
 
+    if (ds_events_init() == -1)
+        goto err_on_events;
+
     if (ds_fb_init(&ds_info.fb))
         goto err_on_fb;
 
@@ -73,11 +77,13 @@ int main(int argc, char *argv[])
         ds_console_restore();
     }
 
+    ds_events_shutdown();
     ds_fb_shutdown(&ds_info.fb);
     ds_log_shutdown();
 
     return 0;
 
+err_on_events:
 err_on_fb:
     ds_log_shutdown();
 
