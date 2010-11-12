@@ -9,11 +9,24 @@
 #include <sys/epoll.h>
 #include <sys/timerfd.h>
 
+struct cb {
+    int fd;
+    void (*func)(int fd);
+};
+
 static bool _mainloop_quit;
 
 static int epollfd = -1;
 
-static int _timers[TIMERS_NR] = { -1 };
+/* callbacks */
+static void on_quit(int fd);
+
+static struct cb _timers[TIMERS_NR] = {
+    {
+       .fd = -1,
+       .func = on_quit
+    }
+};
 
 #define MAX_EPOLL_EVENTS 5
 
@@ -23,7 +36,7 @@ int ds_events_shutdown(void)
     int i, r = 0;
 
     for (i = 0; i < TIMERS_NR; i++) {
-        if (_timers[i] != -1 && (r |= close(_timers[i])) == -1)
+        if (_timers[i].fd != -1 && (r |= close(_timers[i].fd)) == -1)
             err("shutdown timer %d - %m", i);
     }
 
@@ -33,34 +46,41 @@ int ds_events_shutdown(void)
     return r;
 }
 
-static void _process_events(struct epoll_event *ev)
+static void on_quit(int fd)
 {
     uint64_t buf;
 
-    inf("processing events for fd %d", ev->data.fd);
+    while (read(fd, &buf, sizeof(buf)) > 0)
+        ;
 
-    if (ev->data.fd == _timers[TIMERS_QUIT]) {
-        while (read(ev->data.fd, &buf, sizeof(buf)) > 0)
-            ;
+    if (errno != EAGAIN)
+        err("read quit timer");
 
-        if (errno != EAGAIN)
-            err("read quit timer");
 
-        _mainloop_quit = 1;
-    }
+    _mainloop_quit = 1;
 }
 
-static int _watch_fd(int fd)
+static void _process_events(struct epoll_event *ev)
+{
+    struct cb *cb = ev->data.ptr;
+
+    inf("processing events for fd %d", cb->fd);
+
+    cb->func(cb->fd);
+}
+
+static int _watch_fd(int fd, struct cb *cb)
 {
     struct epoll_event ev;
 
     inf("_watch_fd %d", fd);
 
     ev.events = EPOLLIN;
-    ev.data.fd = fd;
+    ev.data.ptr = cb;
     if (epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
         err("epoll_ctl: timer fd - %m");
         close(fd);
+        cb->fd = -1;
         return -1;
     }
 
@@ -71,11 +91,11 @@ int ds_events_timer_add(int idx, time_t tv_sec, long tv_nsec, bool oneshot)
 {
     struct itimerspec tm = { { 0 }, { 0 } };
 
-    assert(idx < TIMERS_NR && _timers[idx] == -1);
+    assert(idx < TIMERS_NR && _timers[idx].fd == -1);
 
-    _timers[idx] = timerfd_create(CLOCK_MONOTONIC,
-                                  TFD_NONBLOCK | TFD_CLOEXEC);
-    if (_timers[idx] == -1) {
+    _timers[idx].fd = timerfd_create(CLOCK_MONOTONIC,
+                                     TFD_NONBLOCK | TFD_CLOEXEC);
+    if (_timers[idx].fd == -1) {
         err("timerfd_create - %m");
         return -1;
     }
@@ -88,13 +108,13 @@ int ds_events_timer_add(int idx, time_t tv_sec, long tv_nsec, bool oneshot)
         tm.it_interval.tv_nsec = tv_nsec;
     }
 
-    if (timerfd_settime(_timers[idx], 0, &tm, NULL) == -1) {
+    if (timerfd_settime(_timers[idx].fd, 0, &tm, NULL) == -1) {
         err("timerfd_settime - %m");
-        close(_timers[idx]);
+        close(_timers[idx].fd);
         return -1;
     }
 
-    return _watch_fd(_timers[idx]);
+    return _watch_fd(_timers[idx].fd, &_timers[idx]);
 }
 
 int ds_events_run(void)
