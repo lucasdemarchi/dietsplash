@@ -23,6 +23,7 @@ static int epollfd = -1;
 
 /* callbacks */
 static void on_quit(int fd);
+static void on_connection_request(int fd);
 
 static struct cb _timers[TIMERS_NR] = {
     {
@@ -71,6 +72,17 @@ static void on_quit(int fd)
 
 
     _mainloop_quit = 1;
+}
+
+static void on_connection_request(int fd)
+{
+    int s;
+
+    while ((s = accept(fd, NULL, NULL)) > 0) {
+        inf("connection request received");
+        close(s);
+        inf("connection closed");
+    }
 }
 
 static void _process_events(struct epoll_event *ev)
