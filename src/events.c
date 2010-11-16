@@ -36,6 +36,7 @@ int ds_events_shutdown(void)
     int i, r = 0;
 
     for (i = 0; i < TIMERS_NR; i++) {
+        inf("closing timer %d", _timers[i].fd);
         if (_timers[i].fd != -1 && (r |= close(_timers[i].fd)) == -1)
             err("shutdown timer %d - %m", i);
     }
@@ -78,7 +79,7 @@ static int _watch_fd(int fd, struct cb *cb)
     ev.events = EPOLLIN;
     ev.data.ptr = cb;
     if (epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
-        err("epoll_ctl: timer fd - %m");
+        err("epoll_ctl: fd - %m");
         close(fd);
         cb->fd = -1;
         return -1;
