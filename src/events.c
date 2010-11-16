@@ -3,11 +3,14 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/epoll.h>
+#include <sys/socket.h>
 #include <sys/timerfd.h>
+#include <sys/un.h>
 
 struct cb {
     int fd;
@@ -28,8 +31,14 @@ static struct cb _timers[TIMERS_NR] = {
     }
 };
 
-#define MAX_EPOLL_EVENTS 5
+static struct cb _cmds_sock = {
+    .fd = -1,
+    .func = on_connection_request
+};
 
+#define MAX_EPOLL_EVENTS 5
+#define MAX_CMDS_EVENTS 5
+#define CMDS_SOCKET_NAME "/dietsplash"
 
 int ds_events_shutdown(void)
 {
@@ -40,6 +49,9 @@ int ds_events_shutdown(void)
         if (_timers[i].fd != -1 && (r |= close(_timers[i].fd)) == -1)
             err("shutdown timer %d - %m", i);
     }
+
+    if (_cmds_sock.fd != -1 && (r |= close(_cmds_sock.fd)) == -1)
+        err("close cmds sock - %m");
 
     if((r |= close(epollfd)) == -1)
         err("close epoll - %m");
@@ -116,6 +128,49 @@ int ds_events_timer_add(int idx, time_t tv_sec, long tv_nsec, bool oneshot)
     }
 
     return _watch_fd(_timers[idx].fd, &_timers[idx]);
+}
+
+int ds_events_cmds_listen(void)
+{
+    struct sockaddr_un addr;
+    size_t addrsize, len;
+
+    assert(_cmds_sock.fd == -1);
+    len = strlen(CMDS_SOCKET_NAME);
+    assert(len && len < sizeof(addr.sun_path));
+
+    _cmds_sock.fd = socket(PF_UNIX,
+                           SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
+    if (_cmds_sock.fd == -1) {
+        crit("creating socket - %m");
+        goto exit_err;
+    }
+
+    addr.sun_family = AF_UNIX;
+
+    // abstract socket, meaning the path is not created
+    addr.sun_path[0] = '\0';
+    memcpy(addr.sun_path + 1, CMDS_SOCKET_NAME, len);
+
+    // size is +1 because of the initial NUL char
+    addrsize = len + offsetof(struct sockaddr_un, sun_path) + 1;
+
+    if (bind(_cmds_sock.fd, (struct sockaddr *) &addr, addrsize) == -1) {
+        crit("binding to cmd socket - %m");
+        goto close_and_exit_err;
+    }
+
+    if (listen(_cmds_sock.fd, MAX_CMDS_EVENTS) == -1) {
+        crit("listening socket - %m");
+        goto close_and_exit_err;
+    }
+
+    return _watch_fd(_cmds_sock.fd, &_cmds_sock);
+
+close_and_exit_err:
+    close(_cmds_sock.fd);
+exit_err:
+    return -1;
 }
 
 int ds_events_run(void)

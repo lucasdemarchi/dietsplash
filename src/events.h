@@ -39,5 +39,6 @@ int ds_events_shutdown(void);
 int ds_events_run(void);
 
 int ds_events_timer_add(int idx, time_t tv_sec, long tv_nsec, bool oneshot);
+int ds_events_cmds_listen(void);
 
 #endif
