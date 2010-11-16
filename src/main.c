@@ -72,6 +72,8 @@ int main(int argc, char *argv[])
     ds_console_setup();
     ds_fb_draw_logo(&ds_info.fb);
 
+    ds_events_cmds_listen();
+
     if (ds_info.testing) {
         ds_events_timer_add(TIMERS_QUIT, 5, 0, true);
         ds_events_run();
