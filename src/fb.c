@@ -45,10 +45,32 @@ static const char *logo_filename = LOGOFILE;
 #include "logo.h"
 #endif
 
-void ds_fb_draw_logo(struct ds_fb *ds_fb)
+void ds_fb_draw_region(struct ds_fb *fb, struct image *region,
+                       float xalign, float yalign)
 {
-    unsigned long i, j;
-    long cy_offset, cx_offset;
+    unsigned long i, j, xoffset, yoffset;
+
+    assert(fb);
+    assert(region);
+
+    xoffset = (unsigned long)((fb->xres - region->width) * xalign);
+    yoffset = (unsigned long)((fb->yres - region->height) * yalign);
+
+    for (j = 0; j < region->height; j++) {
+        for (i = 0; i < region->width; i++) {
+            long location = ((i + fb->xoffset + xoffset) << 2) +
+                            (j + fb->yoffset + yoffset) * fb->stride;
+
+            *(fb->data + location)     = region->pixels[j * region->width + i].blue;
+            *(fb->data + location + 1) = region->pixels[j * region->width + i].green;
+            *(fb->data + location + 2) = region->pixels[j * region->width + i].red;
+            *(fb->data + location + 3) = 0;
+        }
+    }
+}
+
+void ds_fb_draw_logo(struct ds_fb *fb)
+{
     struct image *logo;
 
 #ifdef LOGOFILE
@@ -57,20 +79,8 @@ void ds_fb_draw_logo(struct ds_fb *ds_fb)
     logo = &dietsplash_staticlogo;
 #endif
 
-    cx_offset = (ds_fb->xres - logo->width) / 2;
-    cy_offset = (ds_fb->yres - logo->height) / 2;
+    ds_fb_draw_region(fb, logo, 0.5, 0.5);
 
-    for (j = 0; j < logo->height; j++) {
-        for (i = 0; i < logo->width; i++) {
-            long location = ((i + ds_fb->xoffset + cx_offset) << 2) +
-                            (j + ds_fb->yoffset + cy_offset) * ds_fb->stride;
-
-            *(ds_fb->data + location)     = logo->pixels[j * logo->width + i].blue;
-            *(ds_fb->data + location + 1) = logo->pixels[j * logo->width + i].green;
-            *(ds_fb->data + location + 2) = logo->pixels[j * logo->width + i].red;
-            *(ds_fb->data + location + 3) = 0;
-        }
-    }
 #ifdef LOGOFILE
     free(logo);
 #endif
