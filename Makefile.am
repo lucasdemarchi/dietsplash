@@ -36,8 +36,8 @@ endif
 AM_CFLAGS += -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\" \
             -DREAL_INIT=\""@REAL_INIT@"\"
 
-if UMOUNTDEV
-AM_CFLAGS += -DDEVTMPFS_UMOUNT_REQUIRED=1
+if ENABLE_UMOUNTDEV
+AM_CFLAGS += -DENABLE_UMOUNTDEV=1
 endif
 
 AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src

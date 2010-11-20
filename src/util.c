@@ -84,7 +84,7 @@ int ds_fs_setup(const char *dev)
 
 int ds_fs_shutdown(void)
 {
-#ifdef DEVTMPFS_UMOUNT_REQUIRED
+#ifdef ENABLE_UMOUNTDEV
     if (--_devtmpfs_mounted)
         return 0;
 
