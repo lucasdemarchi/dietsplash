@@ -48,22 +48,34 @@ static const char *logo_filename = LOGOFILE;
 void ds_fb_draw_region(struct ds_fb *fb, struct image *region,
                        float xalign, float yalign)
 {
-    unsigned long i, j, xoffset, yoffset;
+    long i, j, xoffset, yoffset;
+    long w = region->width;
+    long h = region->height;
 
     assert(fb);
     assert(region);
 
-    xoffset = (unsigned long)((fb->xres - region->width) * xalign);
-    yoffset = (unsigned long)((fb->yres - region->height) * yalign);
+    if (fb->xres < w) {
+        wrn("fb xres (%u) is less than region size (%u)", fb->xres, w);
+        w = fb->xres;
+    }
 
-    for (j = 0; j < region->height; j++) {
-        for (i = 0; i < region->width; i++) {
+    if (fb->yres < h) {
+        wrn("fb yres (%u) is less than region size (%u)", fb->yres, h);
+        h = fb->yres;
+    }
+
+    xoffset = (long)((fb->xres - w) * xalign);
+    yoffset = (long)((fb->yres - h) * yalign);
+
+    for (j = 0; j < h; j++) {
+        for (i = 0; i < w; i++) {
             long location = ((i + fb->xoffset + xoffset) << 2) +
                             (j + fb->yoffset + yoffset) * fb->stride;
 
-            *(fb->data + location)     = region->pixels[j * region->width + i].blue;
-            *(fb->data + location + 1) = region->pixels[j * region->width + i].green;
-            *(fb->data + location + 2) = region->pixels[j * region->width + i].red;
+            *(fb->data + location)     = region->pixels[j * w + i].blue;
+            *(fb->data + location + 1) = region->pixels[j * w + i].green;
+            *(fb->data + location + 2) = region->pixels[j * w + i].red;
             *(fb->data + location + 3) = 0;
         }
     }
