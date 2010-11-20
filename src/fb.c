@@ -45,7 +45,7 @@ static const char *logo_filename = LOGOFILE;
 #include "logo.h"
 #endif
 
-void ds_fb_draw_region(struct ds_fb *fb, struct image *region,
+void ds_fb_draw_region(struct ds_fb *fb, const struct image *region,
                        float xalign, float yalign)
 {
     long i, j, xoffset, yoffset;
