@@ -11,16 +11,16 @@ depcomp \
 install-sh \
 missing
 
-CLEANFILES = src/logo.h data/logo.ppm
+CLEANFILES = src/background.h data/background.ppm
 
 rootbindir = @rootdir@/bin
 
 rootbin_PROGRAMS = src/dietsplash
 
-if CUSTOM_LOGO
-logo = @LOGO_PATH@
+if ENABLE_CUSTOM_BACKGROUND
+background = @BACKGROUND_PATH@
 else
-logo = $(abs_top_srcdir)/data/default_logo.ppm
+background = $(abs_top_srcdir)/data/default_background.ppm
 endif
 
 if MAINTAINER_MODE
@@ -55,23 +55,23 @@ src_dietsplash_SOURCES = \
 			 src/util.c \
 			 src/util.h
 
-if !STATICLOGO
+if !ENABLE_STATICIMAGES
 data_dietsplashdir = $(datadir)/@PACKAGE@
-data_dietsplash_DATA = $(logo)
-AM_CFLAGS += -DLOGOFILE=\""$(build_datadir)/logo.ppm"\"
+data_dietsplash_DATA = $(background)
+AM_CFLAGS += -DBACKGROUND_FILE=\""$(build_datadir)/background.ppm"\"
 
 if !MAINTAINER_MODE
 install-data-hook:
 	( cd $(DESTDIR)$(data_dietsplashdir) && \
-		rm -f logo.ppm && \
-		$(LN_S) $(shell basename ${logo}) logo.ppm )
+		rm -f background.ppm && \
+		$(LN_S) $(shell basename ${background}) background.ppm )
 else
-src/fb.o: makelogo
+src/fb.o: makebackground
 
-makelogo: $(logo)
+makebackground: $(background)
 	$(AM_V_GEN) \
-		( cd $(build_datadir) && rm -f logo.ppm && \
-		$(LN_S) $(logo) logo.ppm )
+		( cd $(build_datadir) && rm -f background.ppm && \
+		$(LN_S) $(background) background.ppm )
 endif
 else
 noinst_PROGRAMS = src/genstaticlogo
@@ -83,10 +83,10 @@ src_genstaticlogo_SOURCES = \
 			    src/util.c \
 			    src/util.h
 
-src/logo.h: $(logo) src/genstaticlogo
-	$(AM_V_GEN)src/genstaticlogo dietsplash_staticlogo $@ $<
+src/background.h: $(background) src/genstaticlogo
+	$(AM_V_GEN)src/genstaticlogo dietsplash_static_background $@ $<
 
-src/fb.o: src/logo.h
+src/fb.o: src/background.h
 endif
 
-EXTRA_DIST = $(srcdir)/data/default_logo.ppm
+EXTRA_DIST = $(srcdir)/data/default_background.ppm

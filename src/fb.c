@@ -39,10 +39,10 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-#ifdef LOGOFILE
-static const char *logo_filename = LOGOFILE;
+#ifdef BACKGROUND_FILE
+static const char *background_filename = BACKGROUND_FILE;
 #else
-#include "logo.h"
+#include "background.h"
 #endif
 
 void ds_fb_draw_region(struct ds_fb *fb, const struct image *region,
@@ -83,18 +83,18 @@ void ds_fb_draw_region(struct ds_fb *fb, const struct image *region,
 
 void ds_fb_draw_logo(struct ds_fb *fb)
 {
-    struct image *logo;
+    struct image *bg;
 
-#ifdef LOGOFILE
-    logo = ds_read_image(logo_filename);
+#ifdef BACKGROUND_FILE
+    bg = ds_read_image(background_filename);
 #else
-    logo = &dietsplash_staticlogo;
+    bg = &dietsplash_static_background;
 #endif
 
-    ds_fb_draw_region(fb, logo, 0.5, 0.5);
+    ds_fb_draw_region(fb, bg, 0.5, 0.5);
 
-#ifdef LOGOFILE
-    free(logo);
+#ifdef BACKGROUND_FILE
+    free(bg);
 #endif
 }
 

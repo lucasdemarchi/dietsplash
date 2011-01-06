@@ -67,21 +67,22 @@ AC_ARG_ENABLE(umountdev, AC_HELP_STRING([--enable-umountdev],
 		[enable_umountdev=${enableval}], [enable_umountdev="no"])
 AM_CONDITIONAL(ENABLE_UMOUNTDEV, test "${enable_umountdev}" == "yes")
 
-################################# Static logo
-AC_ARG_ENABLE(staticlogo, AC_HELP_STRING([--disable-staticlogo],
-	                                 [disable static default logo]),
-		[enable_staticlogo=${enableval}], [enable_staticlogo="yes"])
-AM_CONDITIONAL(STATICLOGO, test "${enable_staticlogo}" != "no")
+################################# Static images
+AC_ARG_ENABLE(staticimages, AC_HELP_STRING([--enable-staticimages],
+	      [enable images to be converted in source files at
+	       compile time. This is the default.]),
+	      [enable_staticimages=${enableval}], [enable_staticimages="yes"])
+AM_CONDITIONAL(ENABLE_STATICIMAGES, test "${enable_staticimages}" != "no")
 
-################################# Custom logo
-AC_ARG_WITH(logo, AC_HELP_STRING([--with-logo=LOGO],
-	                         [specify location of logo to use or "default" for default logo]),
-		[logo=${withval}], [logo="default"])
-if (test "${logo}" != "default"); then
-	LOGO_PATH="${logo}"
-	AC_SUBST(LOGO_PATH)
+################################# Custom background
+AC_ARG_WITH(bg, AC_HELP_STRING([--with-bg=BG_FILE],
+	                         [specify location of background image to use or "default" for default background]),
+		[bg=${withval}], [bg="default"])
+if (test "${bg}" != "default"); then
+	BACKGROUND_PATH="${bg}"
+	AC_SUBST(BACKGROUND_PATH)
 fi
-AM_CONDITIONAL(CUSTOM_LOGO, test "${logo}" != "default")
+AM_CONDITIONAL(ENABLE_CUSTOM_BACKGROUND, test "${bg}" != "default")
 
 ################################# Real init
 AC_ARG_WITH(init, AC_HELP_STRING([--with-realinit=INIT],
