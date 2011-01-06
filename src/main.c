@@ -66,11 +66,10 @@ int main(int argc, char *argv[])
     if (ds_events_init() == -1)
         goto err_on_events;
 
+    ds_console_setup();
+
     if (ds_fb_init(&ds_info.fb))
         goto err_on_fb;
-
-    ds_console_setup();
-    ds_fb_draw_logo(&ds_info.fb);
 
     ds_events_cmds_listen();
 

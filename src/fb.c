@@ -81,7 +81,7 @@ void ds_fb_draw_region(struct ds_fb *fb, const struct image *region,
     }
 }
 
-void ds_fb_draw_logo(struct ds_fb *fb)
+static void _fb_draw_bg(struct ds_fb *fb)
 {
     struct image *bg;
 
@@ -182,6 +182,8 @@ int ds_fb_init(struct ds_fb *ds_fb)
 
     if (close(fd) == -1)
         err("fb closing fd -- %m");
+
+    _fb_draw_bg(ds_fb);
 
     return 0;
 
