@@ -153,7 +153,7 @@ int ds_fb_init(struct ds_fb *ds_fb)
      * centralized in all monitors
      */
     if (vinfo.xres != vinfo.xres_virtual || vinfo.yres != vinfo.yres_virtual)
-        inf("Virtual resolution is not the same of visible one. Logo will be " \
+        wrn("Virtual resolution is not the same of visible one. Logo will be " \
             "centralized with regard to visible resolution");
 
     ds_fb->image_format = BGRA8888;
