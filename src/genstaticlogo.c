@@ -26,7 +26,6 @@
 #include "pnmtologo.h"
 #include "util.h"
 
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -106,7 +105,7 @@ int main(int argc, char *argv[])
     if (strcmp(filename_out, "-")) {
 	fp_out = fopen(filename_out, "w");
 	if (!fp_out)
-	    die("Cannot create file %s: %s\n", filename_out, strerror(errno));
+	    die("Cannot create file %s: %m\n", filename_out);
     } else {
 	fp_out = stdout;
     }

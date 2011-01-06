@@ -28,7 +28,6 @@
 
 #include "pnmtologo.h"
 
-#include <errno.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,7 +82,7 @@ struct image *ds_read_image(const char *filename)
     /* open image file */
     fp = fopen(filename, "r");
     if (!fp)
-	die("Cannot open file %s: %s\n", filename, strerror(errno));
+	die("Cannot open file %s: %m\n", filename);
 
     /* check file type and read file header */
     magic = fgetc(fp);
@@ -110,7 +109,7 @@ struct image *ds_read_image(const char *filename)
 
     logo = malloc(sizeof(*logo));
     if (!logo)
-        die("%s\n", strerror(errno));
+        die("%m\n");
 
     logo->width = get_number(fp);
     logo->height = get_number(fp);
@@ -120,7 +119,7 @@ struct image *ds_read_image(const char *filename)
                             sizeof(struct color));
     if (!tmp) {
         free(logo);
-	die("%s\n", strerror(errno));
+	die("%m\n");
     }
     logo = tmp;
 
