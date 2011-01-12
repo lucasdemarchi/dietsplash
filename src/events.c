@@ -60,6 +60,24 @@ int ds_events_shutdown(void)
     return r;
 }
 
+static int _watch_fd(int fd, struct cb *cb)
+{
+    struct epoll_event ev;
+
+    inf("_watch_fd %d", fd);
+
+    ev.events = EPOLLIN;
+    ev.data.ptr = cb;
+    if (epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
+        err("epoll_ctl: fd - %m");
+        close(fd);
+        cb->fd = -1;
+        return -1;
+    }
+
+    return fd;
+}
+
 static void on_quit(int fd)
 {
     uint64_t buf;
@@ -92,24 +110,6 @@ static void _process_events(struct epoll_event *ev)
     inf("processing events for fd %d", cb->fd);
 
     cb->func(cb->fd);
-}
-
-static int _watch_fd(int fd, struct cb *cb)
-{
-    struct epoll_event ev;
-
-    inf("_watch_fd %d", fd);
-
-    ev.events = EPOLLIN;
-    ev.data.ptr = cb;
-    if (epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
-        err("epoll_ctl: fd - %m");
-        close(fd);
-        cb->fd = -1;
-        return -1;
-    }
-
-    return fd;
 }
 
 int ds_events_timer_add(int idx, time_t tv_sec, long tv_nsec, bool oneshot)
