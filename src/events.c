@@ -103,46 +103,7 @@ static void on_connection_request(int fd)
     }
 }
 
-static void _process_events(struct epoll_event *ev)
-{
-    struct cb *cb = ev->data.ptr;
-
-    inf("processing events for fd %d", cb->fd);
-
-    cb->func(cb->fd);
-}
-
-int ds_events_timer_add(int idx, time_t tv_sec, long tv_nsec, bool oneshot)
-{
-    struct itimerspec tm = { { 0 }, { 0 } };
-
-    assert(idx < TIMERS_NR && _timers[idx].fd == -1);
-
-    _timers[idx].fd = timerfd_create(CLOCK_MONOTONIC,
-                                     TFD_NONBLOCK | TFD_CLOEXEC);
-    if (_timers[idx].fd == -1) {
-        err("timerfd_create - %m");
-        return -1;
-    }
-
-    tm.it_value.tv_sec = tv_sec;
-    tm.it_value.tv_nsec = tv_nsec;
-
-    if (!oneshot) {
-        tm.it_interval.tv_sec = tv_sec;
-        tm.it_interval.tv_nsec = tv_nsec;
-    }
-
-    if (timerfd_settime(_timers[idx].fd, 0, &tm, NULL) == -1) {
-        err("timerfd_settime - %m");
-        close(_timers[idx].fd);
-        return -1;
-    }
-
-    return _watch_fd(_timers[idx].fd, &_timers[idx]);
-}
-
-int ds_events_cmds_listen(void)
+static int _events_cmds_listen(void)
 {
     struct sockaddr_un addr;
     size_t addrsize, len;
@@ -185,6 +146,45 @@ exit_err:
     return -1;
 }
 
+static void _process_events(struct epoll_event *ev)
+{
+    struct cb *cb = ev->data.ptr;
+
+    inf("processing events for fd %d", cb->fd);
+
+    cb->func(cb->fd);
+}
+
+int ds_events_timer_add(int idx, time_t tv_sec, long tv_nsec, bool oneshot)
+{
+    struct itimerspec tm = { { 0 }, { 0 } };
+
+    assert(idx < TIMERS_NR && _timers[idx].fd == -1);
+
+    _timers[idx].fd = timerfd_create(CLOCK_MONOTONIC,
+                                     TFD_NONBLOCK | TFD_CLOEXEC);
+    if (_timers[idx].fd == -1) {
+        err("timerfd_create - %m");
+        return -1;
+    }
+
+    tm.it_value.tv_sec = tv_sec;
+    tm.it_value.tv_nsec = tv_nsec;
+
+    if (!oneshot) {
+        tm.it_interval.tv_sec = tv_sec;
+        tm.it_interval.tv_nsec = tv_nsec;
+    }
+
+    if (timerfd_settime(_timers[idx].fd, 0, &tm, NULL) == -1) {
+        err("timerfd_settime - %m");
+        close(_timers[idx].fd);
+        return -1;
+    }
+
+    return _watch_fd(_timers[idx].fd, &_timers[idx]);
+}
+
 void ds_events_stop(void)
 {
     _mainloop_quit = 1;
@@ -222,6 +222,8 @@ int ds_events_init(void)
         err("epoll_create - %m");
         return -1;
     }
+
+    _events_cmds_listen();
 
     return 0;
 }

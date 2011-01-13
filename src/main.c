@@ -63,15 +63,13 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (ds_events_init() == -1)
-        goto err_on_events;
-
     ds_console_setup();
 
     if (ds_fb_init(&ds_info.fb))
         goto err_on_fb;
 
-    ds_events_cmds_listen();
+    if (ds_events_init() == -1)
+        goto err_on_events;
 
     if (ds_info.testing) {
         ds_events_timer_add(TIMERS_QUIT, 5, 0, true);
@@ -86,6 +84,8 @@ int main(int argc, char *argv[])
     return 0;
 
 err_on_events:
+    ds_fb_shutdown(&ds_info.fb);
+
 err_on_fb:
     ds_log_shutdown();
 
