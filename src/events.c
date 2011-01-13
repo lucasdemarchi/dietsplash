@@ -185,6 +185,11 @@ exit_err:
     return -1;
 }
 
+void ds_events_stop(void)
+{
+    _mainloop_quit = 1;
+}
+
 int ds_events_run(void)
 {
     inf("entering mainloop");
