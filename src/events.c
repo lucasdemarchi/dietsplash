@@ -32,7 +32,7 @@ static struct cb _timers[TIMERS_NR] = {
     }
 };
 
-static struct cb _cmds_sock = {
+static struct cb _cmds_conn = {
     .fd = -1,
     .func = on_connection_request
 };
@@ -51,8 +51,8 @@ int ds_events_shutdown(void)
             err("shutdown timer %d - %m", i);
     }
 
-    if (_cmds_sock.fd != -1 && (r |= close(_cmds_sock.fd)) == -1)
-        err("close cmds sock - %m");
+    if (_cmds_conn.fd != -1 && (r |= close(_cmds_conn.fd)) == -1)
+        err("close cmds connection sock - %m");
 
     if((r |= close(epollfd)) == -1)
         err("close epoll - %m");
@@ -107,13 +107,13 @@ static int _events_cmds_listen(void)
     struct sockaddr_un addr;
     size_t addrsize, len;
 
-    assert(_cmds_sock.fd == -1);
+    assert(_cmds_conn.fd == -1);
     len = strlen(CMDS_SOCKET_NAME);
     assert(len && len < sizeof(addr.sun_path));
 
-    _cmds_sock.fd = socket(PF_UNIX,
+    _cmds_conn.fd = socket(PF_UNIX,
                            SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
-    if (_cmds_sock.fd == -1) {
+    if (_cmds_conn.fd == -1) {
         crit("creating socket - %m");
         goto exit_err;
     }
@@ -127,20 +127,20 @@ static int _events_cmds_listen(void)
     // size is +1 because of the initial NUL char
     addrsize = len + offsetof(struct sockaddr_un, sun_path) + 1;
 
-    if (bind(_cmds_sock.fd, (struct sockaddr *) &addr, addrsize) == -1) {
+    if (bind(_cmds_conn.fd, (struct sockaddr *) &addr, addrsize) == -1) {
         crit("binding to cmd socket - %m");
         goto close_and_exit_err;
     }
 
-    if (listen(_cmds_sock.fd, MAX_CMDS_EVENTS) == -1) {
+    if (listen(_cmds_conn.fd, MAX_CMDS_EVENTS) == -1) {
         crit("listening socket - %m");
         goto close_and_exit_err;
     }
 
-    return _watch_fd(_cmds_sock.fd, &_cmds_sock);
+    return _watch_fd(_cmds_conn.fd, &_cmds_conn);
 
 close_and_exit_err:
-    close(_cmds_sock.fd);
+    close(_cmds_conn.fd);
 exit_err:
     return -1;
 }
