@@ -88,8 +88,7 @@ static void on_quit(int fd)
     if (errno != EAGAIN)
         err("read quit timer");
 
-
-    _mainloop_quit = 1;
+    ds_events_stop();
 }
 
 static void on_connection_request(int fd)
