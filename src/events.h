@@ -29,6 +29,8 @@
 #include <stdbool.h>
 #include <time.h>
 
+#define MAX_CMD_LEN 63
+
 enum timers {
     TIMERS_QUIT = 0,
     TIMERS_NR

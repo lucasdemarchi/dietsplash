@@ -60,6 +60,9 @@ int ds_events_shutdown(void)
     if (_cmds_conn.fd != -1 && (r |= close(_cmds_conn.fd)) == -1)
         err("close cmds connection sock - %m");
 
+    if (_cmds_read_sock.fd != -1 && (r |= close(_cmds_read_sock.fd)) == -1)
+        err("close cmds sock - %m");
+
     if((r |= close(epollfd)) == -1)
         err("close epoll - %m");
 
@@ -85,7 +88,26 @@ static int _watch_fd(int fd, struct cb *cb)
 }
 
 static void on_command(int fd) {
+    char buf[MAX_CMD_LEN + 1];
+    int n;
 
+    buf[MAX_CMD_LEN] = '\0';
+
+    while ((n = read(fd, buf, sizeof(buf))) > 0) {
+        unsigned int perc = (unsigned int) buf[0];
+
+        if (n < 2 || (unsigned int)(n - 2) != strlen(&buf[1]))
+            wrn("Command received is truncated %d %d", n, strlen(&buf[1]));
+
+        inf("Command received: perc: %d%% message: %s", perc, &buf[1]);
+    }
+
+    if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+        return;
+
+    /* Client closed the connection */
+    close(fd);
+    _cmds_read_sock.fd = -1;
 }
 
 static void on_quit(int fd)
@@ -117,8 +139,8 @@ static void on_connection_request(int fd)
 
     while ((s = accept4(fd, NULL, NULL, SOCK_NONBLOCK | SOCK_CLOEXEC)) > 0) {
         inf("connection request received");
-        close(s);
-        inf("connection closed");
+        _cmds_read_sock.fd = s;
+        _watch_fd(_cmds_read_sock.fd, &_cmds_read_sock);
     }
 }
 
