@@ -95,7 +95,7 @@ static void on_quit(int fd)
     while (read(fd, &buf, sizeof(buf)) > 0)
         ;
 
-    if (errno != EAGAIN)
+    if (errno != EAGAIN && errno != EWOULDBLOCK)
         err("read quit timer");
 
     ds_events_stop();
