@@ -115,7 +115,7 @@ static void on_connection_request(int fd)
             ;
     }
 
-    while ((s = accept(fd, NULL, NULL)) > 0) {
+    while ((s = accept4(fd, NULL, NULL, SOCK_NONBLOCK | SOCK_CLOEXEC)) > 0) {
         inf("connection request received");
         close(s);
         inf("connection closed");
