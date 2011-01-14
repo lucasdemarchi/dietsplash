@@ -24,6 +24,7 @@ static int epollfd = -1;
 /* callbacks */
 static void on_quit(int fd);
 static void on_connection_request(int fd);
+static void on_command(int fd);
 
 static struct cb _timers[TIMERS_NR] = {
     {
@@ -35,6 +36,11 @@ static struct cb _timers[TIMERS_NR] = {
 static struct cb _cmds_conn = {
     .fd = -1,
     .func = on_connection_request
+};
+
+static struct cb _cmds_read_sock = {
+    .fd = -1,
+    .func = on_command,
 };
 
 #define MAX_EPOLL_EVENTS 5
@@ -78,6 +84,10 @@ static int _watch_fd(int fd, struct cb *cb)
     return fd;
 }
 
+static void on_command(int fd) {
+
+}
+
 static void on_quit(int fd)
 {
     uint64_t buf;
@@ -94,6 +104,16 @@ static void on_quit(int fd)
 static void on_connection_request(int fd)
 {
     int s;
+    uint64_t buf;
+
+    /*
+     * Ignore new connections since there's a client
+     * already
+     */
+    if (_cmds_read_sock.fd != -1) {
+        while (read(fd, &buf, sizeof(buf)) > 0)
+            ;
+    }
 
     while ((s = accept(fd, NULL, NULL)) > 0) {
         inf("connection request received");
