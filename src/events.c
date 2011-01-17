@@ -33,14 +33,12 @@ static struct cb _timers[TIMERS_NR] = {
     }
 };
 
-static struct cb _cmds_conn = {
-    .fd = -1,
-    .func = on_connection_request
-};
-
-static struct cb _cmds_read_sock = {
-    .fd = -1,
-    .func = on_command,
+static struct cmds {
+    struct cb conn;
+    struct cb read;
+} _cmds = {
+    .conn = { .fd = -1, .func = on_connection_request },
+    .read = { .fd = -1, .func = on_command },
 };
 
 #define MAX_EPOLL_EVENTS 5
@@ -57,10 +55,10 @@ int ds_events_shutdown(void)
             err("shutdown timer %d - %m", i);
     }
 
-    if (_cmds_conn.fd != -1 && (r |= close(_cmds_conn.fd)) == -1)
+    if (_cmds.conn.fd != -1 && (r |= close(_cmds.conn.fd)) == -1)
         err("close cmds connection sock - %m");
 
-    if (_cmds_read_sock.fd != -1 && (r |= close(_cmds_read_sock.fd)) == -1)
+    if (_cmds.read.fd != -1 && (r |= close(_cmds.read.fd)) == -1)
         err("close cmds sock - %m");
 
     if((r |= close(epollfd)) == -1)
@@ -107,7 +105,7 @@ static void on_command(int fd) {
 
     /* Client closed the connection */
     close(fd);
-    _cmds_read_sock.fd = -1;
+    _cmds.read.fd = -1;
 }
 
 static void on_quit(int fd)
@@ -132,15 +130,15 @@ static void on_connection_request(int fd)
      * Ignore new connections since there's a client
      * already
      */
-    if (_cmds_read_sock.fd != -1) {
+    if (_cmds.read.fd != -1) {
         while (read(fd, &buf, sizeof(buf)) > 0)
             ;
     }
 
     while ((s = accept4(fd, NULL, NULL, SOCK_NONBLOCK | SOCK_CLOEXEC)) > 0) {
         inf("connection request received");
-        _cmds_read_sock.fd = s;
-        _watch_fd(_cmds_read_sock.fd, &_cmds_read_sock);
+        _cmds.read.fd = s;
+        _watch_fd(_cmds.read.fd, &_cmds.read);
     }
 }
 
@@ -149,13 +147,13 @@ static int _events_cmds_listen(void)
     struct sockaddr_un addr;
     size_t addrsize, len;
 
-    assert(_cmds_conn.fd == -1);
+    assert(_cmds.conn.fd == -1);
     len = strlen(CMDS_SOCKET_NAME);
     assert(len && len < sizeof(addr.sun_path));
 
-    _cmds_conn.fd = socket(PF_UNIX,
+    _cmds.conn.fd = socket(PF_UNIX,
                            SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
-    if (_cmds_conn.fd == -1) {
+    if (_cmds.conn.fd == -1) {
         crit("creating socket - %m");
         goto exit_err;
     }
@@ -169,20 +167,20 @@ static int _events_cmds_listen(void)
     // size is +1 because of the initial NUL char
     addrsize = len + offsetof(struct sockaddr_un, sun_path) + 1;
 
-    if (bind(_cmds_conn.fd, (struct sockaddr *) &addr, addrsize) == -1) {
+    if (bind(_cmds.conn.fd, (struct sockaddr *) &addr, addrsize) == -1) {
         crit("binding to cmd socket - %m");
         goto close_and_exit_err;
     }
 
-    if (listen(_cmds_conn.fd, MAX_CMDS_EVENTS) == -1) {
+    if (listen(_cmds.conn.fd, MAX_CMDS_EVENTS) == -1) {
         crit("listening socket - %m");
         goto close_and_exit_err;
     }
 
-    return _watch_fd(_cmds_conn.fd, &_cmds_conn);
+    return _watch_fd(_cmds.conn.fd, &_cmds.conn);
 
 close_and_exit_err:
-    close(_cmds_conn.fd);
+    close(_cmds.conn.fd);
 exit_err:
     return -1;
 }
