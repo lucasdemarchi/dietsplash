@@ -36,6 +36,10 @@ static struct cb _timers[TIMERS_NR] = {
 static struct cmds {
     struct cb conn;
     struct cb read;
+    struct {
+        unsigned char perc;
+        char msg[MAX_CMD_LEN];
+    } boot_status;
 } _cmds = {
     .conn = { .fd = -1, .func = on_connection_request },
     .read = { .fd = -1, .func = on_command },
@@ -92,13 +96,17 @@ static void on_command(int fd) {
     buf[MAX_CMD_LEN] = '\0';
 
     while ((n = read(fd, buf, sizeof(buf))) > 0) {
-        unsigned int perc = (unsigned int) buf[0];
+        _cmds.boot_status.perc = (unsigned char) buf[0];
 
         if (n < 2 || (unsigned int)(n - 2) != strlen(&buf[1]))
             wrn("Command received is truncated %d %d", n, strlen(&buf[1]));
 
-        inf("Command received: perc: %d%% message: %s", perc, &buf[1]);
+        inf("Command received: perc: %u%% message: %s",
+                                                _cmds.boot_status.perc, &buf[1]);
     }
+
+    /* save the latest boot status */
+    memcpy(&_cmds.boot_status.msg, &(buf[1]), MAX_CMD_LEN);
 
     if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
         return;
