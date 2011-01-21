@@ -1,4 +1,4 @@
-AC_INIT(dietsplash, 0.1, [lucas.demarchi@profusion.mobi])
+AC_INIT([dietsplash],[0.1],[lucas.demarchi@profusion.mobi])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability silent-rules tar-pax subdir-objects dist-bzip2])
@@ -8,7 +8,7 @@ AM_MAINTAINER_MODE
 
 AC_PREFIX_DEFAULT(/usr)
 
-AC_LANG_C
+AC_LANG([C])
 AC_PROG_CC
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
@@ -105,4 +105,5 @@ AC_SUBST([rootdir], [$with_rootdir])
 
 
 #################################
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
