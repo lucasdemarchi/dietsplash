@@ -150,30 +150,48 @@ static void on_connection_request(int fd)
     }
 }
 
+/**
+ * Setup our private socket to communicate boot progress
+ *
+ * @return file descriptor of new socket created
+ */
+static inline int __events_socket_setup(struct sockaddr_un *addr, size_t *addrsize)
+{
+    int fd;
+    size_t len;
+
+    len = strlen(CMDS_SOCKET_NAME);
+    assert(len && len < sizeof(addr->sun_path));
+
+    fd = socket(PF_UNIX, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
+    if (fd == -1) {
+        crit("creating socket - %m");
+        goto out;
+    }
+
+    addr->sun_family = AF_UNIX;
+
+    // abstract socket, meaning the path is not created
+    addr->sun_path[0] = '\0';
+    memcpy(addr->sun_path + 1, CMDS_SOCKET_NAME, len);
+
+    // size is +1 because of the initial NUL char
+    *addrsize = len + offsetof(struct sockaddr_un, sun_path) + 1;
+
+out:
+    return fd;
+}
+
 static int _events_cmds_listen(void)
 {
     struct sockaddr_un addr;
-    size_t addrsize, len;
+    size_t addrsize;
 
     assert(_cmds.conn.fd == -1);
-    len = strlen(CMDS_SOCKET_NAME);
-    assert(len && len < sizeof(addr.sun_path));
 
-    _cmds.conn.fd = socket(PF_UNIX,
-                           SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
-    if (_cmds.conn.fd == -1) {
-        crit("creating socket - %m");
-        goto exit_err;
-    }
-
-    addr.sun_family = AF_UNIX;
-
-    // abstract socket, meaning the path is not created
-    addr.sun_path[0] = '\0';
-    memcpy(addr.sun_path + 1, CMDS_SOCKET_NAME, len);
-
-    // size is +1 because of the initial NUL char
-    addrsize = len + offsetof(struct sockaddr_un, sun_path) + 1;
+    _cmds.conn.fd = __events_socket_setup(&addr, &addrsize);
+    if (_cmds.conn.fd == -1)
+       goto exit_err;
 
     if (bind(_cmds.conn.fd, (struct sockaddr *) &addr, addrsize) == -1) {
         crit("binding to cmd socket - %m");
