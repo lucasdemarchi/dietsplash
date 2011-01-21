@@ -1,6 +1,7 @@
 .deps
 .dirstamp
 dietsplash
+dietsplashctl
 genstaticlogo
 background.h
 *.o

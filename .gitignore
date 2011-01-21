@@ -12,4 +12,5 @@ config.h
 depcomp
 install-sh
 stamp-h1
+cscope.out
 *.swp
