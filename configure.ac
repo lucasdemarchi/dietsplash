@@ -62,7 +62,7 @@ CC_CHECK_CFLAGS_APPEND([ \
         -Wl,--gc-sections])
 
 ################################# Umount /dev
-AC_ARG_ENABLE(umountdev, AC_HELP_STRING([--enable-umountdev],
+AC_ARG_ENABLE(umountdev, AS_HELP_STRING([--enable-umountdev],
 	                                 [unmount /dev if it was mounted by dietsplash]),
 		[enable_umountdev=${enableval}], [enable_umountdev="no"])
 AM_CONDITIONAL(ENABLE_UMOUNTDEV, test "${enable_umountdev}" == "yes")
@@ -74,14 +74,14 @@ AC_ARG_ENABLE([log], AS_HELP_STRING([--disable-log], [Completely disable log,
 AM_CONDITIONAL(ENABLE_LOG, test "${enable_log}" != "no")
 
 ################################# Static images
-AC_ARG_ENABLE(staticimages, AC_HELP_STRING([--enable-staticimages],
+AC_ARG_ENABLE(staticimages, AS_HELP_STRING([--enable-staticimages],
 	      [enable images to be converted in source files at
 	       compile time. This is the default.]),
 	      [enable_staticimages=${enableval}], [enable_staticimages="yes"])
 AM_CONDITIONAL(ENABLE_STATICIMAGES, test "${enable_staticimages}" != "no")
 
 ################################# Custom background
-AC_ARG_WITH(bg, AC_HELP_STRING([--with-bg=BG_FILE],
+AC_ARG_WITH(bg, AS_HELP_STRING([--with-bg=BG_FILE],
 	                         [specify location of background image to use or "default" for default background]),
 		[bg=${withval}], [bg="default"])
 if (test "${bg}" != "default"); then
@@ -91,7 +91,7 @@ fi
 AM_CONDITIONAL(ENABLE_CUSTOM_BACKGROUND, test "${bg}" != "default")
 
 ################################# Real init
-AC_ARG_WITH(init, AC_HELP_STRING([--with-realinit=INIT],
+AC_ARG_WITH(init, AS_HELP_STRING([--with-realinit=INIT],
 	                         [specify location of real init. Default is "/bin/systemd"]),
 		[realinit=${withval}], [realinit="/bin/systemd"])
 REAL_INIT="${realinit}"
