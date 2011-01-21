@@ -11,4 +11,5 @@ config.h.in
 config.h
 depcomp
 install-sh
+stamp-h1
 *.swp
