@@ -54,7 +54,7 @@ src_dietsplash_SOURCES = \
 			 src/util.h
 
 if !ENABLE_STATICIMAGES
-data_dietsplashdir = $(datadir)/@PACKAGE@
+data_dietsplashdir = $(pkgdatadir)
 data_dietsplash_DATA = $(background)
 AM_CFLAGS += -DBACKGROUND_FILE=\""$(build_datadir)/background.ppm"\"
 
