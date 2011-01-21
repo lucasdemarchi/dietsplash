@@ -44,7 +44,9 @@ if ENABLE_LOG
 AM_CFLAGS += -DENABLE_LOG=1
 endif
 
-AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src
+AM_CPPFLAGS = \
+	      -include $(top_builddir)/config.h \
+	      -I$(builddir)/src -I$(srcdir)/src
 
 src_dietsplash_SOURCES = \
 			 src/events.c \

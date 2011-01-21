@@ -1,5 +1,6 @@
 AC_INIT([dietsplash],[0.1],[lucas.demarchi@profusion.mobi])
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability silent-rules tar-pax subdir-objects dist-bzip2])
 AM_SILENT_RULES([yes])

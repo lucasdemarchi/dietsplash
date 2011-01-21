@@ -1,5 +1,6 @@
 #!/bin/sh
 
 aclocal -I m4 && \
-	automake --add-missing --copy && \
-	autoconf
+	autoconf -Wall && \
+	autoheader && \
+	automake --copy --foreign --add-missing

@@ -7,6 +7,8 @@ compile
 configure
 config.status
 config.log
+config.h.in
+config.h
 depcomp
 install-sh
 *.swp
