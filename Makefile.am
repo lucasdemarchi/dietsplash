@@ -17,6 +17,8 @@ rootbindir = @rootdir@/bin
 
 rootbin_PROGRAMS = src/dietsplash
 
+bin_PROGRAMS = src/dietsplashctl
+
 if ENABLE_CUSTOM_BACKGROUND
 background = @BACKGROUND_PATH@
 else
@@ -52,6 +54,8 @@ src_dietsplash_SOURCES = \
 			 src/pnmtologo.h \
 			 src/util.c \
 			 src/util.h
+
+src_dietsplashctl_SOURCES = src/dietsplashctl.c
 
 if !ENABLE_STATICIMAGES
 data_dietsplashdir = $(pkgdatadir)
