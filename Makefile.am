@@ -36,14 +36,6 @@ endif
 AM_CFLAGS += -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\" \
             -DREAL_INIT=\""@REAL_INIT@"\"
 
-if ENABLE_UMOUNTDEV
-AM_CFLAGS += -DENABLE_UMOUNTDEV=1
-endif
-
-if ENABLE_LOG
-AM_CFLAGS += -DENABLE_LOG=1
-endif
-
 AM_CPPFLAGS = \
 	      -include $(top_builddir)/config.h \
 	      -I$(builddir)/src -I$(srcdir)/src

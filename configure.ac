@@ -66,13 +66,17 @@ CC_CHECK_CFLAGS_APPEND([ \
 AC_ARG_ENABLE(umountdev, AS_HELP_STRING([--enable-umountdev],
 	        [unmount /dev if it was mounted by dietsplash]),
 		[enable_umountdev=${enableval}])
-AM_CONDITIONAL(ENABLE_UMOUNTDEV, test "${enable_umountdev}" == "yes")
+if (test "${enable_umountdev}" == "yes"); then
+	AC_DEFINE(ENABLE_UMOUNTDEV, 1, [Set to 1 if unmountdev is enabled])
+fi
 
 ################################# Disable log
 AC_ARG_ENABLE([log], AS_HELP_STRING([--disable-log], [Completely disable log,
 	       even removing log strings from binary]),
 	       [enable_log=${enableval}])
-AM_CONDITIONAL(ENABLE_LOG, test "${enable_log}" != "no")
+if (test "${enable_log}" != "no"); then
+	AC_DEFINE(ENABLE_LOG, 1, [Set to 1 if log is enabled])
+fi
 
 ################################# Static images
 AC_ARG_ENABLE(staticimages, AS_HELP_STRING([--disable-staticimages],
