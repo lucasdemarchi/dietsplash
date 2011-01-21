@@ -24,6 +24,8 @@
  */
 
 #include "log.h"
+
+#ifdef ENABLE_LOG
 #include "util.h"
 
 #include <string.h>
@@ -102,3 +104,10 @@ void ds_log_shutdown(void)
     _pid = 0;
     _prog = NULL;
 }
+#else
+inline int ds_log_get_current_level(void) { return 0; }
+inline void ds_log(int level, const char *file, int line, const char *func, const char *fmt, ...) { }
+inline void ds_log_init(const char *argv0) { }
+inline void ds_log_shutdown(void) { }
+
+#endif

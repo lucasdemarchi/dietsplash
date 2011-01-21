@@ -40,6 +40,10 @@ if ENABLE_UMOUNTDEV
 AM_CFLAGS += -DENABLE_UMOUNTDEV=1
 endif
 
+if ENABLE_LOG
+AM_CFLAGS += -DENABLE_LOG=1
+endif
+
 AM_CPPFLAGS = -I$(builddir)/src -I$(srcdir)/src
 
 src_dietsplash_SOURCES = \

@@ -67,6 +67,12 @@ AC_ARG_ENABLE(umountdev, AC_HELP_STRING([--enable-umountdev],
 		[enable_umountdev=${enableval}], [enable_umountdev="no"])
 AM_CONDITIONAL(ENABLE_UMOUNTDEV, test "${enable_umountdev}" == "yes")
 
+################################# Disable log
+AC_ARG_ENABLE([log], AS_HELP_STRING([--disable-log], [Completely disable log,
+	       even removing log strings from binary]),
+	       [enable_log=${enableval}])
+AM_CONDITIONAL(ENABLE_LOG, test "${enable_log}" != "no")
+
 ################################# Static images
 AC_ARG_ENABLE(staticimages, AC_HELP_STRING([--enable-staticimages],
 	      [enable images to be converted in source files at

@@ -39,10 +39,18 @@ int ds_log_get_current_level(void);
 #define LOG_INFO      3
 #define LOG_DEBUG     4
 
+#ifdef ENABLE_LOG
 #define crit(fmt, ...) ds_log(LOG_CRITICAL, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
 #define err(fmt, ...) ds_log(LOG_ERROR, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
 #define wrn(fmt, ...) ds_log(LOG_WARNING, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
 #define inf(fmt, ...) ds_log(LOG_INFO, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
 #define dbg(fmt, ...) ds_log(LOG_DEBUG, __FILE__, __LINE__, __FUNCTION__, fmt, ##__VA_ARGS__)
+#else
+#define crit(fmt, ...) do { } while(0)
+#define err(fmt, ...) do { } while(0)
+#define wrn(fmt, ...) do { } while(0)
+#define inf(fmt, ...) do { } while(0)
+#define dbg(fmt, ...) do { } while(0)
+#endif
 
 #endif
