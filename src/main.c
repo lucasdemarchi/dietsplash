@@ -39,6 +39,7 @@ struct ds_info {
 };
 static struct ds_info ds_info;
 
+#define MAX_RUNTIME 60
 
 int main(int argc, char *argv[])
 {
@@ -71,11 +72,16 @@ int main(int argc, char *argv[])
     if (ds_events_init() == -1)
         goto err_on_events;
 
-    if (ds_info.testing) {
-        ds_events_timer_add(TIMERS_QUIT, 5, 0, true);
-        ds_events_run();
+    ds_events_timer_add(TIMERS_QUIT, MAX_RUNTIME, 0, true);
+    ds_events_run();
+
+    /*
+     * inconditionally restore console if we are in testing mode or if we
+     * are exiting because of a failure
+     */
+    if (ds_info.testing ||
+                ds_events_status_get() == MAINLOOP_STATUS_EXIT_FAILURE)
         ds_console_restore();
-    }
 
     ds_events_shutdown();
     ds_fb_shutdown(&ds_info.fb);
