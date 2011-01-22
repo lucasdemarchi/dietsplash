@@ -36,10 +36,18 @@ enum timers {
     TIMERS_NR
 };
 
+enum mainloop_status {
+    MAINLOOP_STATUS_NOT_RUNNING = 0,
+    MAINLOOP_STATUS_RUNNING,
+    MAINLOOP_STATUS_EXIT_SUCCESS,
+    MAINLOOP_STATUS_EXIT_FAILURE,
+};
+
+enum mainloop_status ds_events_status_get(void);
 int ds_events_init(void);
 int ds_events_shutdown(void);
 int ds_events_run(void);
-void ds_events_stop(void);
+void ds_events_stop(enum mainloop_status status);
 
 int ds_events_timer_add(int idx, time_t tv_sec, long tv_nsec, bool oneshot);
 

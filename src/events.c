@@ -18,6 +18,7 @@ struct cb {
 };
 
 static bool _mainloop_quit;
+static enum mainloop_status _mainloop_status;
 
 static int epollfd = -1;
 
@@ -126,7 +127,7 @@ static void on_quit(int fd)
     if (errno != EAGAIN && errno != EWOULDBLOCK)
         err("read quit timer");
 
-    ds_events_stop();
+    ds_events_stop(MAINLOOP_STATUS_EXIT_FAILURE);
 }
 
 static void on_connection_request(int fd)
@@ -250,14 +251,28 @@ int ds_events_timer_add(int idx, time_t tv_sec, long tv_nsec, bool oneshot)
     return _watch_fd(_timers[idx].fd, &_timers[idx]);
 }
 
-void ds_events_stop(void)
+/**
+ * Get the status of the mainloop
+ *
+ * @return Status of mainloop.
+ */
+enum mainloop_status ds_events_status_get(void)
+{
+    return _mainloop_status;
+}
+
+void ds_events_stop(enum mainloop_status status)
 {
     _mainloop_quit = 1;
+    _mainloop_status = status;
 }
 
 int ds_events_run(void)
 {
     inf("entering mainloop");
+
+    _mainloop_status = MAINLOOP_STATUS_RUNNING;
+
     while(!_mainloop_quit) {
         struct epoll_event events[MAX_EPOLL_EVENTS];
         int nfds, i;
@@ -277,6 +292,7 @@ int ds_events_run(void)
     }
 
     inf("exiting mainloop");
+
     return 0;
 }
 
