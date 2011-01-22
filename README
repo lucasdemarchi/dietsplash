@@ -1,12 +1,14 @@
 dietsplash
 ==========
 
-Simple bootsplash that aims to adhere to the KISS philosophy. As such, don't
-expect fancy animations while your computer is booting. All that we want is an
-image and hopefully some boot status indication.
+Simple bootsplash that aims to adhere to the KISS philosophy. It's possible to
+put a background and simple animations are on the way to be supported. Since
+bootsplashes are most likely to be done by distro maintainters and are not
+meant to be easily changed by user, dietsplash is developed without scripting
+and lots of configurations like others. Its configurations are almost all done
+during compile time, including custom animations.
 
-BIG FAT WARNING
-***************
-
-It does not work yet. All you'll get if you compile it is a penguin drawn to
-your framebuffer.
+That said, dietsplash is targeted as a small bootsplash to be used in embedded
+systems but that can also be used on desktop. We keep it small and with not
+extra dependencies so all our precious I/O time can be used to actually boot
+faster.
