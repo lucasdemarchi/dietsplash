@@ -104,8 +104,7 @@ AC_SUBST(REAL_INIT)
 ################################# Root dir
 AC_ARG_WITH([rootdir],
         AS_HELP_STRING([--with-rootdir=DIR],
-		       [Root directory for files necessary for boot]),[],
-		       [with_rootdir=${ac_default_prefix}])
+		       [Root directory for files necessary for boot]))
 AC_SUBST([rootdir], [$with_rootdir])
 
 
