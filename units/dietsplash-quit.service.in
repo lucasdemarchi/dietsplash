@@ -1,0 +1,8 @@
+[Unit]
+Description=Terminate dietsplash Boot Screen
+Before=getty@tty1.service
+After=dev-tty1.device
+
+[Service]
+ExecStart=-@bindir@/dietsplashctl 100 ""
+Type=oneshot
