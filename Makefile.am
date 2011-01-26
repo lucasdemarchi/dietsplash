@@ -11,9 +11,11 @@ depcomp \
 install-sh \
 missing
 
-CLEANFILES = src/background.h data/background.ppm
+CLEANFILES = src/background.h data/background.ppm \
+	     $(nodist_systemunit_DATA)
 
 rootbindir = @rootdir@/bin
+systemunitdir = @rootdir@/lib/systemd/system/
 
 rootbin_PROGRAMS = src/dietsplash
 
@@ -88,9 +90,26 @@ src/fb.o: src/background.h
 endif
 
 
-EXTRA_DIST = $(srcdir)/data/default_background.ppm
+EXTRA_DIST = data/default_background.ppm \
+	     units/dietsplash-quit.service.in
+
+nodist_systemunit_DATA = units/dietsplash-quit.service
+
+SED_PROCESS = \
+	      $(AM_V_GEN)$(MKDIR_P) $(dir $@) && \
+	      $(SED) -e 's,@bindir\@,$(bindir),g' \
+	      < $< > $@ || rm $@
+
+units/%: units/%.in Makefile
+	$(SED_PROCESS)
+
 
 install-data-hook:
+	$(MKDIR_P) -m 0755 \
+		$(DESTDIR)$(systemunitdir)/multi-user.target.wants
+	( cd $(DESTDIR)$(systemunitdir)/graphical.target.wants && \
+		rm -f dietsplash-quit.service && \
+		$(LN_S) ../dietsplash-quit.service dietsplash-quit.service )
 if !ENABLE_STATICIMAGES
 	( cd $(DESTDIR)$(data_dietsplashdir) && \
 		rm -f background.ppm && \
