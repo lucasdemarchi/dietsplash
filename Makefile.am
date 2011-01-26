@@ -62,19 +62,15 @@ data_dietsplashdir = $(pkgdatadir)
 data_dietsplash_DATA = $(background)
 AM_CFLAGS += -DBACKGROUND_FILE=\""$(build_datadir)/background.ppm"\"
 
-if !MAINTAINER_MODE
-install-data-hook:
-	( cd $(DESTDIR)$(data_dietsplashdir) && \
-		rm -f background.ppm && \
-		$(LN_S) $(shell basename ${background}) background.ppm )
-else
 src/fb.o: makebackground
 
 makebackground: $(background)
+if MAINTAINER_MODE
 	$(AM_V_GEN) \
 		( cd $(build_datadir) && rm -f background.ppm && \
 		$(LN_S) $(background) background.ppm )
 endif
+
 else
 noinst_PROGRAMS = src/genstaticlogo
 
@@ -91,4 +87,12 @@ src/background.h: $(background) src/genstaticlogo
 src/fb.o: src/background.h
 endif
 
+
 EXTRA_DIST = $(srcdir)/data/default_background.ppm
+
+install-data-hook:
+if !ENABLE_STATICIMAGES
+	( cd $(DESTDIR)$(data_dietsplashdir) && \
+		rm -f background.ppm && \
+		$(LN_S) $(shell basename ${background}) background.ppm )
+endif
