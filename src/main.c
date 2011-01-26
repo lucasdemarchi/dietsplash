@@ -39,7 +39,7 @@ struct ds_info {
 };
 static struct ds_info ds_info;
 
-#define MAX_RUNTIME 60
+#define MAX_RUNTIME 3 * 60
 
 int main(int argc, char *argv[])
 {
