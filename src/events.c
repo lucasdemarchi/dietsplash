@@ -109,6 +109,9 @@ static void on_command(int fd) {
     /* save the latest boot status */
     memcpy(&_cmds.boot_status.msg, &(buf[1]), MAX_CMD_LEN);
 
+    if (_cmds.boot_status.perc == 100)
+        ds_events_stop(MAINLOOP_STATUS_EXIT_SUCCESS);
+
     if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
         return;
 
