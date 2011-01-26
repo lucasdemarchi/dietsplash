@@ -106,7 +106,7 @@ units/%: units/%.in Makefile
 
 install-data-hook:
 	$(MKDIR_P) -m 0755 \
-		$(DESTDIR)$(systemunitdir)/multi-user.target.wants
+		$(DESTDIR)$(systemunitdir)/graphical.target.wants
 	( cd $(DESTDIR)$(systemunitdir)/graphical.target.wants && \
 		rm -f dietsplash-quit.service && \
 		$(LN_S) ../dietsplash-quit.service dietsplash-quit.service )
