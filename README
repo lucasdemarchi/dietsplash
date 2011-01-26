@@ -1,5 +1,5 @@
 dietsplash
-==========
+**********
 
 Simple bootsplash that aims to adhere to the KISS philosophy. It's possible to
 put a background and simple animations are on the way to be supported. Since
@@ -12,3 +12,42 @@ That said, dietsplash is targeted as a small bootsplash to be used in embedded
 systems but that can also be used on desktop. We keep it small and with not
 extra dependencies so all our precious I/O time can be used to actually boot
 faster.
+
+
+Compilation and installation
+============================
+
+There are no external dependencies for compiling dietsplash. It accepts some
+configuration values that you might want to check with:
+
+	./configure -h
+
+For the simplest case, in which images are bundled into the final binary, you
+can simply run:
+
+	./configure
+	make
+	make install
+
+This will install 2 binaries, dietsplash and dietsplashctl. The easiest way to
+have it up and running on your system (without even requiring an initrd image)
+is to use it as an init wrapper. You'll have to append 'init=/bin/dietsplash'
+to your kernel command line and give the correct name of your real init during
+compilation (see ./configure -h) -- the default is to use /bin/systemd.
+
+
+Kernel Depenencies
+==================
+
+dietsplash can be run with any kernel version, but it's good to have DEVTMPFS
+compiled in the kernel since we need to write to /dev/ even before the root
+partition is made RW.
+
+
+HACKING
+=======
+
+When hacking, you can pass the option '--enable-maintainer-mode' (or using the
+provided ./bootstrap-configure script) so you can test your changes without
+rebooting. Don't install dietsplash with this flag enabled, otherwise you won't
+be able to boot.
