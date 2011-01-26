@@ -3,7 +3,7 @@ dietsplash
 
 Simple bootsplash that aims to adhere to the KISS philosophy. It's possible to
 put a background and simple animations are on the way to be supported. Since
-bootsplashes are most likely to be done by distro maintainters and are not
+bootsplashes are most likely to be done by distro maintainers and are not
 meant to be easily changed by user, dietsplash is developed without scripting
 and lots of configurations like others. Its configurations are almost all done
 during compile time, including custom animations.
