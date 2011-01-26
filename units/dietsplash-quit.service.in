@@ -1,6 +1,6 @@
 [Unit]
 Description=Terminate dietsplash Boot Screen
-Before=getty@tty1.service
+Before=getty@tty1.service display-manager.service
 After=dev-tty1.device
 
 [Service]
