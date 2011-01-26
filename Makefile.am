@@ -105,6 +105,11 @@ units/%: units/%.in Makefile
 
 
 install-data-hook:
+if MAINTAINER_MODE
+	( echo "You can't use maintainer-mode and install, please" \
+		"reconfigure before installing" 1>&2  && \
+		exit 1)
+endif
 	$(MKDIR_P) -m 0755 \
 		$(DESTDIR)$(systemunitdir)/graphical.target.wants
 	( cd $(DESTDIR)$(systemunitdir)/graphical.target.wants && \
