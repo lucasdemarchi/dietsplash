@@ -37,8 +37,8 @@ All you have to do is to install dietsplash and append 'init=/bin/dietsplash'
 to your kernel command line. During compilation dietsplash will detect the real
 init used on system pass the correct.
 
-Kernel Depenencies
-==================
+Kernel Dependencies
+===================
 
 dietsplash can run with any kernel version, but it's good to have DEVTMPFS
 compiled in the kernel since we need to write to /dev/ even before the root
