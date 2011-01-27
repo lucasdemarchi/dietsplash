@@ -18,6 +18,7 @@ AC_USE_SYSTEM_EXTENSIONS
 
 AC_PROG_LN_S
 AC_PROG_SED
+PKG_PROG_PKG_CONFIG
 
 CC_CHECK_CFLAGS_APPEND([ \
         -pipe \
@@ -96,12 +97,28 @@ if (test "${bg}" != "default"); then
 fi
 AM_CONDITIONAL(ENABLE_CUSTOM_BACKGROUND, test "${bg}" != "default")
 
+AC_ARG_WITH([systemdsystemunitdir],
+	AS_HELP_STRING([--with-systemdsystemunitdir=DIR],  [Directory for systemd service files]),
+	[], [with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)])
+if test "x$with_systemdsystemunitdir" != xno; then
+    AC_SUBST([SYSTEMDSYSTEMUNITDIR], [$with_systemdsystemunitdir])
+fi
+AM_CONDITIONAL(ENABLE_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != xno ])
+
 ################################# Real init
 AC_ARG_WITH(init, AS_HELP_STRING([--with-realinit=INIT],
 	    [specify location of real init. Default is "/bin/systemd"]),
-	    [realinit=${withval}], [realinit="/bin/systemd"])
+	    [realinit=${withval}],
+	    [
+	     if test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != xno; then
+		     realinit="/bin/systemd"
+	     else
+		     realinit="/sbin/init"
+	     fi
+	     ])
 REAL_INIT="${realinit}"
 AC_SUBST(REAL_INIT)
+
 
 ################################# Root dir
 AC_ARG_WITH([rootdir],

@@ -15,7 +15,7 @@ CLEANFILES = src/background.h data/background.ppm \
 	     $(nodist_systemunit_DATA)
 
 rootbindir = @rootdir@/bin
-systemunitdir = @rootdir@/lib/systemd/system/
+systemunitdir = @SYSTEMDSYSTEMUNITDIR@
 
 rootbin_PROGRAMS = src/dietsplash
 
@@ -110,11 +110,13 @@ if MAINTAINER_MODE
 		"reconfigure before installing" 1>&2  && \
 		exit 1)
 endif
+if ENABLE_SYSTEMD
 	$(MKDIR_P) -m 0755 \
 		$(DESTDIR)$(systemunitdir)/graphical.target.wants
 	( cd $(DESTDIR)$(systemunitdir)/graphical.target.wants && \
 		rm -f dietsplash-quit.service && \
 		$(LN_S) ../dietsplash-quit.service dietsplash-quit.service )
+endif
 if !ENABLE_STATICIMAGES
 	( cd $(DESTDIR)$(data_dietsplashdir) && \
 		rm -f background.ppm && \
