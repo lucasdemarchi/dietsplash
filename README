@@ -30,16 +30,17 @@ can simply run:
 	make install
 
 This will install 2 binaries, dietsplash and dietsplashctl. The easiest way to
-have it up and running on your system (without even requiring an initrd image)
-is to use it as an init wrapper. You'll have to append 'init=/bin/dietsplash'
-to your kernel command line and give the correct name of your real init during
-compilation (see ./configure -h) -- the default is to use /bin/systemd.
+have dietsplash up and running on your system (without even requiring an initrd
+image) is to use it as an init wrapper.
 
+All you have to do is to install dietsplash and append 'init=/bin/dietsplash'
+to your kernel command line. During compilation dietsplash will detect the real
+init used on system pass the correct.
 
 Kernel Depenencies
 ==================
 
-dietsplash can be run with any kernel version, but it's good to have DEVTMPFS
+dietsplash can run with any kernel version, but it's good to have DEVTMPFS
 compiled in the kernel since we need to write to /dev/ even before the root
 partition is made RW.
 
