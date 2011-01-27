@@ -1,4 +1,4 @@
-AC_INIT([dietsplash],[0.1],[lucas.demarchi@profusion.mobi])
+AC_INIT([dietsplash],[0.3],[lucas.demarchi@profusion.mobi])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
