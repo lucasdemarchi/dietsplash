@@ -68,7 +68,7 @@ out:
 }
 
 static void usage(void) {
-    fprintf(stderr, "USAGE: dietsplashctl percentage message\n\n"
+    fprintf(stderr, "USAGE: dietsplashctl percentage [message]\n\n"
                     "EXAMPLE\n\t"
                         "dietsplashctl 49 \"loading ssh\"\n\n");
 }
@@ -79,8 +79,15 @@ int main(int argc, char *argv[])
     long perc;
     char buf[MAX_CMD_LEN + 1];
     size_t len;
+    const char *msg;
 
-    if (argc < 2) {
+    if (argc == 2) {
+        msg = argv[2];
+        len = strlen(msg);
+    } else if (argc == 1) {
+        msg = NULL;
+        len = 0;
+    } else {
         usage();
 
         return 1;
@@ -97,15 +104,15 @@ int main(int argc, char *argv[])
 
     buf[0] = (char)(unsigned char) perc;
 
-    len = strlen(argv[2]);
-
     if (len > MAX_CMD_LEN - 1) {
         fprintf(stderr, "Max length is %u. Message will be truncated",
                                                             MAX_CMD_LEN - 1);
         len = MAX_CMD_LEN - 1;
     }
 
-    memcpy(&buf[1], argv[2], len);
+    if (msg)
+        memcpy(&buf[1], msg, len);
+
     buf[len + 1] = '\0';
 
     sfd = setup_socket();
