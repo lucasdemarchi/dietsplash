@@ -112,8 +112,8 @@ if MAINTAINER_MODE
 endif
 if ENABLE_SYSTEMD
 	$(MKDIR_P) -m 0755 \
-		$(DESTDIR)$(systemunitdir)/graphical.target.wants
-	( cd $(DESTDIR)$(systemunitdir)/graphical.target.wants && \
+		$(DESTDIR)$(systemunitdir)/multi-user.target.wants
+	( cd $(DESTDIR)$(systemunitdir)/multi-user.target.wants && \
 		rm -f dietsplash-quit.service && \
 		$(LN_S) ../dietsplash-quit.service dietsplash-quit.service )
 endif
