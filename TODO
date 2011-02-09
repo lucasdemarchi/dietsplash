@@ -2,8 +2,8 @@ Features:
 
 * Integrate with systemd, updating boot status
 
-* Add basic support to upstart
+* Basic support to upstart
 
-* Add basic support to SysV
+* Basic support to SysV
 
-
+* Load jpeg/png file
