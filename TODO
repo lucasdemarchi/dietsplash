@@ -7,3 +7,5 @@ Features:
 * Basic support to SysV
 
 * Load jpeg/png file
+
+* Investigate struct sizes with pahole
