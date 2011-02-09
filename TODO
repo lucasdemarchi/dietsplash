@@ -1,0 +1,9 @@
+Features:
+
+* Integrate with systemd, updating boot status
+
+* Add basic support to upstart
+
+* Add basic support to SysV
+
+
