@@ -42,8 +42,8 @@ struct ds_fb {
     int xoffset;
     int yoffset;
     int type;
-    char *data;
     enum ds_image_format image_format;
+    char *data;
 };
 
 struct image;
