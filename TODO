@@ -8,4 +8,6 @@ Features:
 
 * Load jpeg/png file
 
+* Load an RLE encoded file
+
 * Investigate struct sizes with pahole
