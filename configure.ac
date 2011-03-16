@@ -62,6 +62,8 @@ CC_CHECK_CFLAGS_APPEND([ \
         -fvisibility=hidden \
         -ffunction-sections \
         -fdata-sections \
+	-Wl,-O1 \
+	-Wl,--hash-style=gnu \
         -Wl,--as-needed \
         -Wl,--gc-sections])
 
