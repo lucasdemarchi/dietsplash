@@ -288,6 +288,29 @@ AC_DEFUN([CC_FUNC_EXPECT], [
     [$2])
 ])
 
+AC_DEFUN([CC_FUNC_TYPES_COMPATIBLE_P], [
+  AC_REQUIRE([CC_CHECK_WERROR])
+  AC_CACHE_CHECK([if compiler has __builtin_types_compatible_p function],
+    [cc_cv_func_types_compatible_p],
+    [ac_save_CFLAGS="$CFLAGS"
+     CFLAGS="$CFLAGS $cc_cv_werror"
+     AC_COMPILE_IFELSE([AC_LANG_SOURCE(
+       [int some_function() {
+        int a = 3;
+	return __builtin_types_compatible_p(char *, int) ? 1 : 0;
+	}])],
+       [cc_cv_func_types_compatible_p=yes],
+       [cc_cv_func_types_compatible_p=no])
+     CFLAGS="$ac_save_CFLAGS"
+    ])
+
+  AS_IF([test "x$cc_cv_func_types_compatible_p" = "xyes"],
+    [AC_DEFINE([SUPPORT__BUILTIN_TYPES_COMPATIBLE_P], 1,
+     [Define this if the compiler supports __builtin_types_compatible_p() function])
+     $1],
+    [$2])
+])
+
 AC_DEFUN([CC_ATTRIBUTE_ALIGNED], [
   AC_REQUIRE([CC_CHECK_WERROR])
   AC_CACHE_CHECK([highest __attribute__ ((aligned ())) supported],

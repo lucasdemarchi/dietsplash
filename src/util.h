@@ -41,6 +41,15 @@
 #define BUILD_ASSERT_OR_ZERO(cond) \
         (sizeof(char [1 - 2*!(cond)]) - 1)
 
+
+#if SUPPORT__BUILTIN_TYPES_COMPATIBLE_P
+#define _array_size_chk(arr)						\
+	BUILD_ASSERT_OR_ZERO(!__builtin_types_compatible_p(typeof(arr),	\
+							typeof(&(arr)[0])))
+#else
+#define _array_size_chk(arr) 0
+#endif
+
 /**
  * ARRAY_SIZE - get the number of elements in a visible array
  * @arr: the array whose size you want.
@@ -49,9 +58,8 @@
  * function parameters.  With correct compiler support, such usage
  * will cause a build error (see build_assert).
  */
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) \
-        + BUILD_ASSERT_OR_ZERO(!__builtin_types_compatible_p(typeof(arr),   \
-							typeof(&(arr)[0]))))
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + _array_size_chk(arr))
+
 
 #define DIE_PREFIX "[" PACKAGE_NAME "] ERR: "
 #define LOG_SUFFIX "\n"
