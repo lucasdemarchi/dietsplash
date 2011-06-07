@@ -26,7 +26,32 @@
 #ifndef __DIETSPLASH_UTIL_H
 #define __DIETSPLASH_UTIL_H
 
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+/**
+ * BUILD_ASSERT_OR_ZERO - assert a build-time dependency, as an expression.
+ * @cond: the compile-time condition which must be true.
+ *
+ * Your compile will fail if the condition isn't true, or can't be evaluated
+ * by the compiler.  This can be used in an expression: its value is "0".
+ *
+ * Example:
+ *      #define foo_to_char(foo)                                            \
+ *              ((char *)(foo)                                              \
+ *              + BUILD_ASSERT_OR_ZERO(offsetof(struct foo, string) == 0))
+ */
+#define BUILD_ASSERT_OR_ZERO(cond) \
+        (sizeof(char [1 - 2*!(cond)]) - 1)
+
+/**
+ * ARRAY_SIZE - get the number of elements in a visible array
+ * @arr: the array whose size you want.
+ *
+ * This does not work on pointers, or arrays declared as [], or
+ * function parameters.  With correct compiler support, such usage
+ * will cause a build error (see build_assert).
+ */
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) \
+        + BUILD_ASSERT_OR_ZERO(!__builtin_types_compatible_p(typeof(arr),   \
+							typeof(&(arr)[0]))))
 
 #define DIE_PREFIX "[" PACKAGE_NAME "] ERR: "
 #define LOG_SUFFIX "\n"
