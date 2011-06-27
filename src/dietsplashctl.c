@@ -81,10 +81,10 @@ int main(int argc, char *argv[])
     size_t len;
     const char *msg;
 
-    if (argc == 2) {
+    if (argc == 3) {
         msg = argv[2];
         len = strlen(msg);
-    } else if (argc == 1) {
+    } else if (argc == 2) {
         msg = NULL;
         len = 0;
     } else {
