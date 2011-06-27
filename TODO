@@ -15,3 +15,5 @@ Features:
 * Log messages to syslog
 
 * Use /run/dietsplash instead of /dev/.dietsplash
+
+* Add support to 565 fb
