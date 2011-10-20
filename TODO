@@ -1,19 +1,17 @@
-Features:
+Features (in order of importance):
 
-* Integrate with systemd, updating boot status
+ * Merge animation branch into master
+ * Add support to 565 fb
+ * Load an RLE encoded file
+ * Log messages to syslog
+ * Statically link with uClibC
+ * Integrate with systemd, updating boot status
+ * Use /run/dietsplash instead of /dev/.dietsplash
+ * Basic support to SysV
+ * Basic support to upstart
+ * Load jpeg/png file
 
-* Basic support to upstart
+Always check when features are added:
 
-* Basic support to SysV
-
-* Load jpeg/png file
-
-* Load an RLE encoded file
-
-* Investigate struct sizes with pahole
-
-* Log messages to syslog
-
-* Use /run/dietsplash instead of /dev/.dietsplash
-
-* Add support to 565 fb
+ * Binary size with and without image embedded
+ * Struct sizes with pahole
