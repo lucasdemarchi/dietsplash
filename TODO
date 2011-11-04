@@ -2,6 +2,7 @@ Features (in order of importance):
 
  * Merge animation branch into master
  * Add support to 565 fb
+ * Add support to drm/kms backend
  * Load an RLE encoded file
  * Log messages to syslog
  * Statically link with uClibC
