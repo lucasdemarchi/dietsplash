@@ -111,15 +111,8 @@ AM_CONDITIONAL(ENABLE_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_
 
 ################################# Real init
 AC_ARG_WITH(init, AS_HELP_STRING([--with-init=INIT],
-	    [specify location of real init. Default is "/bin/systemd"]),
-	    [realinit=${withval}],
-	    [
-	     if test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != xno; then
-		     realinit="/bin/systemd"
-	     else
-		     realinit="/sbin/init"
-	     fi
-	     ])
+	    [specify location of real init. Default is "/sbin/init"]),
+	    [realinit=${withval}],[realinit="/sbin/init"])
 REAL_INIT="${realinit}"
 AC_SUBST(REAL_INIT)
 
