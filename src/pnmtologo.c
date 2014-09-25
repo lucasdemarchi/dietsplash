@@ -71,10 +71,28 @@ static unsigned int get_number255(FILE *fp, unsigned int maxval)
     return (255 * val + (maxval/2)) / maxval;
 }
 
+static unsigned int get_byte(FILE *fp)
+{
+    int c;
+
+    c = fgetc(fp);
+    if (c == EOF) {
+	die("end of file\n");
+    }
+
+    return (unsigned int)c;
+}
+
+static unsigned int get_byte255(FILE *fp, unsigned int maxval)
+{
+    unsigned int val = get_byte(fp);
+    return (255 * val + (maxval/2)) / maxval;
+}
+
 struct image *ds_read_image(const char *filename)
 {
     FILE *fp;
-    unsigned int i;
+    unsigned int i, j;
     int magic;
     unsigned int maxval;
     struct image *logo, *tmp;
@@ -100,8 +118,7 @@ struct image *ds_read_image(const char *filename)
 	case '5':
 	case '6':
 	    /* Binary PBM/PGM/PPM */
-	    die("%s: Binary PNM is not supported\n"
-		"Use pnmnoraw(1) to convert it to ASCII PNM\n", filename);
+	    break;
 
 	default:
 	    die("%s is not a PNM file\n", filename);
@@ -147,6 +164,53 @@ struct image *ds_read_image(const char *filename)
 		    logo->pixels[i].red = get_number255(fp, maxval);
 		    logo->pixels[i].green = get_number255(fp, maxval);
 		    logo->pixels[i].blue = get_number255(fp, maxval);
+            }
+	    break;
+
+	case '4':
+	    /* Binary PBM */
+	    {
+	    struct color * pDst = &logo->pixels[0];
+	    for (i = 0; i < logo->height; ++i) {
+		    for (j = 0; j < (logo->width/8); ++j) {
+			    unsigned int val = get_byte(fp);
+			    pDst->red = pDst->green = pDst->blue = ((val & 0x80) ? 0 : 255); ++pDst;
+			    pDst->red = pDst->green = pDst->blue = ((val & 0x40) ? 0 : 255); ++pDst;
+			    pDst->red = pDst->green = pDst->blue = ((val & 0x20) ? 0 : 255); ++pDst;
+			    pDst->red = pDst->green = pDst->blue = ((val & 0x10) ? 0 : 255); ++pDst;
+			    pDst->red = pDst->green = pDst->blue = ((val & 0x08) ? 0 : 255); ++pDst;
+			    pDst->red = pDst->green = pDst->blue = ((val & 0x04) ? 0 : 255); ++pDst;
+			    pDst->red = pDst->green = pDst->blue = ((val & 0x02) ? 0 : 255); ++pDst;
+			    pDst->red = pDst->green = pDst->blue = ((val & 0x01) ? 0 : 255); ++pDst;
+		    }
+		    if (logo->width % 8 != 0) {
+			unsigned int val = get_byte(fp);
+			unsigned int msk = 0x80;
+			for (j = 0; j < (logo->width % 8); ++j) {
+			    pDst->red = pDst->green = pDst->blue = ((val & msk) ? 0 : 255);
+			    ++pDst;
+			    msk >>= 1;
+			}
+		    }
+	    }
+	    }
+	    break;
+
+	case '5':
+	    /* Binary PGM */
+	    maxval = get_number(fp);
+	    for (i = 0; i < logo->height * logo->width; i++)
+                logo->pixels[i].red = logo->pixels[i].green =
+			logo->pixels[i].blue = get_byte255(fp, maxval);
+	    break;
+
+	case '6':
+	    /* Binary PPM */
+	    maxval = get_number(fp);
+	    for (i = 0; i < logo->height * logo->width; i++) {
+		    logo->pixels[i].red = get_byte255(fp, maxval);
+		    logo->pixels[i].green = get_byte255(fp, maxval);
+		    logo->pixels[i].blue = get_byte255(fp, maxval);
             }
 	    break;
     }
