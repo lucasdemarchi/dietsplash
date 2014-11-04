@@ -39,10 +39,14 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
+#ifndef ENABLE_ANIMATION
 #ifdef BACKGROUND_FILE
 static const char *background_filename = BACKGROUND_FILE;
 #else
 #include "background.h"
+#endif
+#else
+#include "animation.h"
 #endif
 
 void ds_fb_draw_region(struct ds_fb *fb, const struct image *region,
@@ -81,6 +85,7 @@ void ds_fb_draw_region(struct ds_fb *fb, const struct image *region,
     }
 }
 
+#ifndef ENABLE_ANIMATION
 static void _fb_draw_bg(struct ds_fb *fb)
 {
     struct image *bg;
@@ -97,6 +102,7 @@ static void _fb_draw_bg(struct ds_fb *fb)
     free(bg);
 #endif
 }
+#endif
 
 int ds_fb_init(struct ds_fb *ds_fb)
 {
@@ -183,7 +189,11 @@ int ds_fb_init(struct ds_fb *ds_fb)
     if (close(fd) == -1)
         err("fb closing fd -- %m");
 
+#ifndef ENABLE_ANIMATION
     _fb_draw_bg(ds_fb);
+#else
+    animation_init(ds_fb);
+#endif
 
     return 0;
 

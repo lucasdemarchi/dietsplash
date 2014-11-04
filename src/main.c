@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
 
 struct ds_info {
     struct ds_fb fb;
@@ -74,6 +75,11 @@ int main(int argc, char *argv[])
 
     ds_events_timer_add(TIMERS_QUIT, MAX_RUNTIME, 0, true);
     ds_events_run();
+
+#ifdef ENABLE_ANIMATION
+    ds_info.fb.exit_pending = 1;
+    pthread_join(ds_info.fb.anim_thread, 0);
+#endif
 
     /*
      * inconditionally restore console if we are in testing mode or if we

@@ -2,9 +2,9 @@
  *
  * dietsplash
  *
- * Copyright (C) 2010 ProFUSION embedded systems
+ * Copyright (C) 2014 O.S. Systems Software Ltda.
  *
- * fb.h - framebuffer rendering
+ * animation.h - animation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -23,36 +23,11 @@
  *
  */
 
-#ifndef __DIETSPLASH_FB_H
-#define __DIETSPLASH_FB_H
+#ifndef __DIETSPLASH_ANIMATION_H
+#define __DIETSPLASH_ANIMATION_H
 
-#include <stdbool.h>
-#include <pthread.h>
+#include "fb.h"
 
-enum ds_image_format {
-    BGRA8888
-};
-
-struct ds_fb {
-    long screen_size;
-    long stride;
-    int xres;
-    int yres;
-    int xres_virtual;
-    int yres_virtual;
-    int xoffset;
-    int yoffset;
-    int type;
-    enum ds_image_format image_format;
-    char *data;
-    pthread_t anim_thread;
-    int exit_pending;
-};
-
-struct image;
-
-void ds_fb_draw_region(struct ds_fb *fb, const struct image *region, float xalign, float yalign);
-int ds_fb_init(struct ds_fb *ds_fb);
-int ds_fb_shutdown(struct ds_fb *ds_fb);
+void animation_init(struct ds_fb *fb);
 
 #endif
