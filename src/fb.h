@@ -28,10 +28,6 @@
 
 #include <stdbool.h>
 
-enum ds_image_format {
-    BGRA8888
-};
-
 struct ds_fb {
     long screen_size;
     long stride;
@@ -42,7 +38,13 @@ struct ds_fb {
     int xoffset;
     int yoffset;
     int type;
-    enum ds_image_format image_format;
+    int bits_per_pixel;
+    int red_length;
+    int red_offset;
+    int green_length;
+    int green_offset;
+    int blue_length;
+    int blue_offset;
     char *data;
 };
 
