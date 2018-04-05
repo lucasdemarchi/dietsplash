@@ -101,6 +101,25 @@ if (test "${bg}" != "default"); then
 fi
 AM_CONDITIONAL(ENABLE_CUSTOM_BACKGROUND, test "${bg}" != "default")
 
+################################ Animation
+AC_ARG_ENABLE(animation, AS_HELP_STRING([--enable-animation],
+	        [enable animation]),
+		[enable_animation=${enableval}])
+if (test "${enable_animation}" == "yes"); then
+	AC_DEFINE(ENABLE_ANIMATION, 1, [Set to 1 if animation is enabled])
+fi
+AM_CONDITIONAL(ENABLE_ANIMATION, test "${enable_animation}" == "yes")
+
+################################# Custom animation
+AC_ARG_WITH(animation, AS_HELP_STRING([--with-animation=ANIMATION_PATH],
+	    [specify location of animation to use or "default" for
+	     default animation]), [animation=${withval}], [animation="default"])
+if (test "${animation}" != "default"); then
+	ANIMATION_PATH="${animation}"
+	AC_SUBST(ANIMATION_PATH)
+fi
+AM_CONDITIONAL(ENABLE_CUSTOM_ANIMATION, test "${animation}" != "default")
+
 AC_ARG_WITH([systemdsystemunitdir],
 	AS_HELP_STRING([--with-systemdsystemunitdir=DIR],  [Directory for systemd service files]),
 	[], [with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)])

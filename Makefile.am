@@ -37,6 +37,12 @@ build_bindir = $(rootbindir)
 AM_CFLAGS = -DLOGLEVEL=0
 endif
 
+if ENABLE_CUSTOM_ANIMATION
+animation = @ANIMATION_PATH@
+else
+animation = $(build_datadir)/data/default_animation/
+endif
+
 AM_CFLAGS += -DDIETSPLASH_BIN=\""$(build_bindir)/dietsplash"\" \
             -DREAL_INIT=\""@REAL_INIT@"\"
 
@@ -57,10 +63,22 @@ src_dietsplash_SOURCES = \
 			 src/util.c \
 			 src/util.h
 
+data_dietsplashdir = $(pkgdatadir)
+
+if ENABLE_ANIMATION
+src_dietsplash_SOURCES += src/animation.c
+src_dietsplash_LDFLAGS = -pthread
+data_dietsplash_anim_dir = $(pkgdatadir)/data/default_animation
+data_dietsplash_anim__DATA = $(abs_top_srcdir)/data/default_animation/desc.txt
+data_dietsplash_part0_dir = $(pkgdatadir)/data/default_animation/part0
+data_dietsplash_part0__DATA = $(abs_top_srcdir)/data/default_animation/part0/*.ppm
+
+AM_CFLAGS += -DANIMATION_PATH=\""$(animation)"\"
+endif
+
 src_dietsplashctl_SOURCES = src/dietsplashctl.c
 
 if !ENABLE_STATICIMAGES
-data_dietsplashdir = $(pkgdatadir)
 data_dietsplash_DATA = $(background)
 AM_CFLAGS += -DBACKGROUND_FILE=\""$(build_datadir)/background.ppm"\"
 
