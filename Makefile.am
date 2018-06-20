@@ -76,14 +76,25 @@ endif
 else
 noinst_PROGRAMS = src/genstaticlogo
 
+src/genstaticlogo-%.o : src/%.c
+	$(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) $(LDFLAGS_FOR_BUILD) $(TARGET_ARCH_FOR_BUILD) -include $(top_builddir)/config.h -DLOGLEVEL=4 -c -o $@ $<
+
 src_genstaticlogo_SOURCES = \
 			    src/genstaticlogo.c \
-			    src/pnmtologo.c \
+			    src/genstaticlogo-pnmtologo.c \
 			    src/pnmtologo.h \
-			    src/util.c \
-			    src/util.h
+			    src/genstaticlogo-util.c \
+			    src/util.h \
+			    src/genstaticlogo-log.c \
+			    src/log.h
 
-src/background.h: $(background) src/genstaticlogo
+$(src_genstaticlogo_OBJECTS): CC=$(CC_FOR_BUILD)
+$(src_genstaticlogo_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
+
+src/genstaticlogo$(BUILD_EXEEXT): $(src_genstaticlogo_OBJECTS)
+	$(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) $(LDFLAGS_FOR_BUILD) $(TARGET_ARCH_FOR_BUILD) $(src_genstaticlogo_OBJECTS) -o $@
+
+src/background.h: $(background) src/genstaticlogo$(BUILD_EXEEXT) Makefile
 	$(AM_V_GEN)src/genstaticlogo dietsplash_static_background $@ $<
 
 src/fb.o: src/background.h
